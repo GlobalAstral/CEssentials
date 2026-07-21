@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(CEssentials C)
 
 add_library(${PROJECT_NAME} STATIC
-  "lib/test.c"
+  "lib/ce_string.c"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
