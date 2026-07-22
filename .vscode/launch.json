@@ -4,7 +4,7 @@
       "name": "C/C++: gcc compilare ed eseguire il debug del file attivo",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/test/Test",
+      "program": "${workspaceFolder}/build/test/StringTest3",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
