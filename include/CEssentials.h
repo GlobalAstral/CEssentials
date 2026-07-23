@@ -5,6 +5,14 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define OK 0
+#define VALUE_IS_NULL -1
+#define OTHER_VALUE_IS_NULL -2
+#define VALUE_IS_FREED -3
+#define OTHER_VALUE_IS_FREED -4
+#define CANNOT_ALLOCATE -4
+#define INDEX_OUT_OF_BOUNDS -5
+
 typedef unsigned char byte;
 
 typedef struct CE__String {
@@ -12,7 +20,8 @@ typedef struct CE__String {
   size_t capacity;
   size_t bytelen;
   size_t length;
-} CE__String;
+  bool isfreed;
+} CE__String, *CE__StrView;
 
 size_t CE__utf8len(CE__String* s);
 
@@ -35,9 +44,9 @@ bool CE__strequ(CE__String* self, CE__String* other);
 
 char* CE__strcstr(CE__String* self);
 
-CE__String CE__substr(CE__String* self, size_t start, size_t end);
+CE__StrView CE__substr(CE__String* self, size_t start, size_t end);
 
-CE__String* CE__strfind(CE__String* self, CE__String* find);
+CE__StrView CE__strfind(CE__String* self, CE__String* find);
 bool CE__strcontains(CE__String* self, CE__String* find);
 
 int CE__printstr(CE__String* self);
