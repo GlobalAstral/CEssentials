@@ -82,7 +82,7 @@ int CE__insertString(CE__String* self, size_t index, CE__String* other) {
   guard(self->isfreed, VALUE_IS_FREED);
   guard(other == nullptr, OTHER_VALUE_IS_NULL);
   guard(other->isfreed, OTHER_VALUE_IS_FREED);
-  guard(index < 0 || index > self->length, INDEX_OUT_OF_BOUNDS);
+  guard(index > self->length, INDEX_OUT_OF_BOUNDS);
   size_t totalsize = self->bytelen + other->bytelen;
   if (self->capacity < totalsize)
     guard(CE__strRealloc(self, totalsize), CANNOT_ALLOCATE);
@@ -147,7 +147,7 @@ char* CE__strcstr(CE__String* self) {
 }
 
 CE__StrView CE__substr(CE__String* self, size_t start, size_t end) {
-  guard(self == nullptr || self->isfreed || start < 0 || start > self->length || end < 0 || end >= self->length, nullptr);
+  guard(self == nullptr || self->isfreed || start > self->length || end > self->length, nullptr);
 
   size_t bstart = CE__utf8_byte_index(self, start);
   size_t bend = CE__utf8_byte_index(self, end);
@@ -190,4 +190,24 @@ int CE__fprintstr(FILE* stream, CE__String* self) {
   int r = fprintf(stream, "%s", temp);
   free(temp);
   return r;
+}
+
+int CE__strdrain(CE__String* self, size_t start, size_t end) {
+  guard(self == nullptr, VALUE_IS_NULL);
+  guard(self->isfreed, VALUE_IS_FREED);
+  guard(start > self->length || end > self->length, INDEX_OUT_OF_BOUNDS);
+  
+  size_t bstart = CE__utf8_byte_index(self, start);
+  size_t bend = CE__utf8_byte_index(self, end);
+  if (end == self->length) {
+    self->length -= end - start;
+    self->bytelen -= bend - bstart;
+    return OK;
+  }
+
+  memmove(self->buffer + bstart, self->buffer + bend, self->bytelen - bend + 1);
+  self->length -= end - start;
+  self->bytelen -= bend - bstart;
+
+  return OK;
 }

@@ -33,7 +33,7 @@ int CE__insertArrayList(CE__ArrayList* self, size_t index, void* item) {
   guard(self == nullptr, VALUE_IS_NULL);
   guard(self->isfreed, VALUE_IS_FREED);
   guard(item == nullptr, OTHER_VALUE_IS_NULL);
-  guard(index < 0 || index > self->length, INDEX_OUT_OF_BOUNDS);
+  guard(index > self->length, INDEX_OUT_OF_BOUNDS);
   
   size_t totalsize = self->length * self->element_size + self->element_size;
   if (self->capacity < totalsize)
@@ -57,7 +57,7 @@ int CE__appendArrayList(CE__ArrayList* self, void* item) {
 }
 
 CE__ArrayListView CE__ArrayListSection(CE__ArrayList* self, size_t start, size_t end) {
-  guard(self == nullptr || self->isfreed || start < 0 || start > self->length || end < 0 || end >= self->length, nullptr);
+  guard(self == nullptr || self->isfreed || start > self->length || end >= self->length, nullptr);
 
   CE__ArrayListView view = (CE__ArrayListView)malloc(sizeof(CE__ArrayList));
   *view = (CE__ArrayList) {
@@ -81,4 +81,20 @@ void* CE__ArrayListFind(CE__ArrayList* self, void* item) {
 
 bool CE__ArrayListContains(CE__ArrayList* self, void* item) {
   return CE__ArrayListFind(self, item) != nullptr;
+}
+
+int CE__removeArrayList(CE__ArrayList* self, size_t index) {
+  guard(self == nullptr, VALUE_IS_NULL);
+  guard(self->isfreed, VALUE_IS_FREED);
+  guard(self->length <= 0, TYPE_EMPTY);
+  guard(index >= self->length, INDEX_OUT_OF_BOUNDS);
+
+  if (index == self->length - 1) {
+    self->length--;
+    return OK;
+  }
+
+  memmove(self->buffer + index * self->element_size, self->buffer + (index + 1) * self->element_size, (self->length - index - 1) * self->element_size);
+  self->length--;
+  return OK;
 }
