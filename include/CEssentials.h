@@ -41,4 +41,4 @@ CE__String* CE__strfind(CE__String* self, CE__String* find);
 bool CE__strcontains(CE__String* self, CE__String* find);
 
 int CE__printstr(CE__String* self);
-int CE__fprintstr(CE__String* self);
+int CE__fprintstr(FILE* stream, CE__String* self);
