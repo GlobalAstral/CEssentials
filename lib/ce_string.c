@@ -28,14 +28,14 @@ CE__String CE__newStringLen(char* init, size_t size) {
   CE__String ret;
   if (!init) {
     ret.bytelen = 0;
-    ret.buffer = NULL;
+    ret.buffer = nullptr;
     CE__strRealloc(&ret, size);
     ret.length = 0;
     return ret;
   }
 
   ret.bytelen = size;
-  ret.buffer = NULL;
+  ret.buffer = nullptr;
   CE__strRealloc(&ret, ret.bytelen);
   memcpy(ret.buffer, init, ret.bytelen);
   ret.length = CE__utf8len(&ret);
@@ -59,7 +59,7 @@ int CE__strRealloc(CE__String* s, size_t size) {
 }
 
 size_t CE__utf8_byte_index(CE__String* target, size_t index) {
-  if (target == NULL)
+  if (target == nullptr)
     return VALUE_IS_NULL;
   if (target->isfreed)
     return VALUE_IS_FREED;
@@ -83,9 +83,9 @@ size_t CE__utf8_byte_index(CE__String* target, size_t index) {
 }
 
 int CE__insertString(CE__String* self, size_t index, CE__String* other) {
-  if (self == NULL)
+  if (self == nullptr)
     return VALUE_IS_NULL;
-  if (other == NULL)
+  if (other == nullptr)
     return OTHER_VALUE_IS_NULL;
   if (self->isfreed)
     return VALUE_IS_FREED;
@@ -118,7 +118,7 @@ int CE__insertString(CE__String* self, size_t index, CE__String* other) {
   return OK;
 }
 int CE__insertCstr(CE__String* self, size_t index, char* s) {
-  if (self == NULL)
+  if (self == nullptr)
     return VALUE_IS_NULL;
   if (self->isfreed)
     return VALUE_IS_FREED;
@@ -152,7 +152,7 @@ bool CE__strequ(CE__String* self, CE__String* other) {
 }
 
 char* CE__strcstr(CE__String* self) {
-  if (self == NULL)
+  if (self == nullptr)
     return VALUE_IS_NULL;
   if (self->isfreed)
     return VALUE_IS_FREED;
@@ -163,12 +163,12 @@ char* CE__strcstr(CE__String* self) {
 }
 
 CE__StrView CE__substr(CE__String* self, size_t start, size_t end) {
-  if (self == NULL)
-    return NULL;
+  if (self == nullptr)
+    return nullptr;
   if (self->isfreed)
-    return NULL;
+    return nullptr;
   if (start < 0 || start >= self->length || end < 0 || end >= self->length)
-    return NULL;
+    return nullptr;
   size_t bstart = CE__utf8_byte_index(self, start);
   size_t bend = CE__utf8_byte_index(self, end);
   CE__StrView r = (CE__StrView)malloc(sizeof(CE__String));
@@ -182,12 +182,12 @@ CE__StrView CE__substr(CE__String* self, size_t start, size_t end) {
 }
 
 CE__StrView CE__strfind(CE__String* self, CE__String* find) {
-  if (self == NULL)
-    return NULL;
-  if (find == NULL)
-    return NULL;
+  if (self == nullptr)
+    return nullptr;
+  if (find == nullptr)
+    return nullptr;
   if (self->isfreed)
-    return NULL;
+    return nullptr;
   if (find->isfreed)
     return OTHER_VALUE_IS_FREED;
   for (size_t i = 0; i < self->length - find->length; i++) {
@@ -195,12 +195,12 @@ CE__StrView CE__strfind(CE__String* self, CE__String* find) {
     if (CE__strequ(sub, find))
       return sub;
   }
-  return NULL;
+  return nullptr;
 }
 
 bool CE__strcontains(CE__String* self, CE__String* find) {
   CE__String* r = CE__strfind(self, find);
-  bool flag = r != NULL;
+  bool flag = r != nullptr;
   free(r);
   return flag;
 }

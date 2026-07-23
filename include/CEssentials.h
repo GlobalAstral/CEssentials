@@ -13,6 +13,9 @@
 #define CANNOT_ALLOCATE -4
 #define INDEX_OUT_OF_BOUNDS -5
 
+#define nullptr NULL
+#define loop while(true)
+
 typedef unsigned char byte;
 
 typedef struct CE__String {
