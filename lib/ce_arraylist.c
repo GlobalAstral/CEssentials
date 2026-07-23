@@ -39,6 +39,9 @@ int CE__insertArrayList(CE__ArrayList* self, size_t index, void* item) {
   if (self->capacity < totalsize)
     guard(CE__ArrayListRealloc(self, totalsize), CANNOT_ALLOCATE);
   
+  if (totalsize < self->capacity / 4)
+    guard(CE__ArrayListRealloc(self, totalsize), CANNOT_ALLOCATE);
+  
   if (index == self->length) {
     memcpy(self->buffer + self->length * self->element_size, item, self->element_size);
     self->length++;

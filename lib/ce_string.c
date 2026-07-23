@@ -1,6 +1,6 @@
 #include <CEssentials.h>
 
-#define DEFAULT_CAP 128
+#define DEFAULT_CAP 64
 #define ceil(a, b) ((a + b - 1) / b)
 #define getcap(size) (ceil(size, DEFAULT_CAP) * DEFAULT_CAP)
 
@@ -86,6 +86,10 @@ int CE__insertString(CE__String* self, size_t index, CE__String* other) {
   size_t totalsize = self->bytelen + other->bytelen;
   if (self->capacity < totalsize)
     guard(CE__strRealloc(self, totalsize), CANNOT_ALLOCATE);
+
+  if (totalsize < self->capacity / 4) {
+    guard(CE__strRealloc(self, totalsize), CANNOT_ALLOCATE);
+  }
 
   if (index == self->length) {
     memcpy(self->buffer + self->bytelen, other->buffer, other->bytelen);
