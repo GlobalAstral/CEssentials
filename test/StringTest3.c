@@ -25,9 +25,19 @@ int main() {
 
   CE__String* r = CE__strfind(&s1, &temp);
 
+  CE__freeString(&temp);
+
   printf("%s\n", CE__strcstr(r));
 
   free(r);
+
+  CE__strdrain(&s1, 3, 9);
+
+  char* tmp = CE__strcstr(&s1);
+
+  printf("%s\n", tmp);
+
+  free(tmp);
 
   CE__freeString(&s1);
   CE__freeString(&s2);
