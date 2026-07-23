@@ -23,7 +23,7 @@ int main() {
 
   CE__String temp = CE__newString("okay");
 
-  CE__String* r = CE__find(&s1, &temp);
+  CE__String* r = CE__strfind(&s1, &temp);
 
   printf("%s\n", CE__strcstr(r));
 

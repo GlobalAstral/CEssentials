@@ -15,6 +15,7 @@
 
 #define nullptr NULL
 #define loop while(true)
+#define guard(condition, ret) if ((condition)) return (ret)
 
 typedef unsigned char byte;
 
@@ -54,3 +55,20 @@ bool CE__strcontains(CE__String* self, CE__String* find);
 
 int CE__printstr(CE__String* self);
 int CE__fprintstr(FILE* stream, CE__String* self);
+
+typedef struct CE__ArrayList {
+  byte* buffer;
+  size_t capacity;
+  size_t length;
+  size_t element_size;
+  bool isfreed;
+} CE__ArrayList, *CE__ArrayListView;
+
+CE__ArrayList CE__newArrayList(size_t element_size);
+void CE__freeArrayList(CE__ArrayList* list);
+int CE__ArrayListRealloc(CE__ArrayList* list, size_t size);
+int CE__insertArrayList(CE__ArrayList* self, size_t index, void* item);
+int CE__appendArrayList(CE__ArrayList* self, void* item);
+CE__ArrayListView CE__ArrayListSection(CE__ArrayList* self, size_t start, size_t end);
+void* CE__ArrayListFind(CE__ArrayList* self, void* item);
+bool CE__ArrayListContains(CE__ArrayList* self, void* item);

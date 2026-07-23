@@ -14,6 +14,11 @@ add_executable(StringTest3
 )
 target_link_libraries(StringTest3 PRIVATE CEssentials)
 
+add_executable(ArrayListsTest1
+  "ArrayListsTest1.c"
+)
+target_link_libraries(ArrayListsTest1 PRIVATE CEssentials)
+
 enable_testing()
 
 add_test(
@@ -29,4 +34,9 @@ add_test(
 add_test(
   NAME StringTest3
   COMMAND "StringTest3"
+)
+
+add_test(
+  NAME ArrayListsTest1
+  COMMAND "ArrayListsTest1"
 )

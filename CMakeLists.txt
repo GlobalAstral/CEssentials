@@ -4,6 +4,7 @@ project(CEssentials C)
 
 add_library(${PROJECT_NAME} STATIC
   "lib/ce_string.c"
+  "lib/ce_arraylist.c"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
