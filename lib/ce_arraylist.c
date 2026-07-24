@@ -101,3 +101,26 @@ int CE__removeArrayList(CE__ArrayList* self, size_t index) {
   self->length--;
   return OK;
 }
+
+CE__Iterator CE__ArrayListBegin(CE__ArrayList* self) {
+  return (CE__Iterator) {
+    .pointer = self->buffer,
+    .index = 0,
+    .length = self->length,
+    .step = self->element_size,
+    .next = CE__ArrayListNext,
+    .get = CE__ArrayListGet
+  };
+}
+
+bool CE__ArrayListNext(CE__Iterator* it) {
+  if (it->index >= it->length - 1)
+    return false;
+  it->pointer += it->step;
+  it->index++;
+  return true;
+}
+
+void* CE__ArrayListGet(CE__Iterator* it) {
+  return it->pointer;
+}

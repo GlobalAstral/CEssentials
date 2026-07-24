@@ -17,8 +17,25 @@
 #define nullptr NULL
 #define loop while(true)
 #define guard(condition, ret) if ((condition)) return (ret)
+#define castderef(type, expr) (*((type*)(expr)))
 
 typedef unsigned char byte;
+
+typedef struct CE__Iterator CE__Iterator; 
+
+typedef bool (*CE__Iterator__NextFunc)(CE__Iterator*);
+typedef void* (*CE__Iterator__GetFunc)(CE__Iterator*);
+
+typedef struct CE__Iterator {
+  byte* pointer;
+  size_t index;
+  size_t length;
+  size_t step;
+
+  CE__Iterator__NextFunc next;
+  CE__Iterator__GetFunc get;
+
+} CE__Iterator;
 
 typedef struct CE__String {
   byte* buffer;
@@ -47,6 +64,9 @@ bool CE__strcontains(CE__String* self, CE__String* find);
 int CE__printstr(CE__String* self);
 int CE__fprintstr(FILE* stream, CE__String* self);
 int CE__strdrain(CE__String* self, size_t start, size_t end);
+CE__Iterator CE__strbegin(CE__String* str);
+bool CE__strnext(CE__Iterator* it);
+void* CE__strget(CE__Iterator* it);
 
 typedef struct CE__ArrayList {
   byte* buffer;
@@ -65,3 +85,6 @@ CE__ArrayListView CE__ArrayListSection(CE__ArrayList* self, size_t start, size_t
 void* CE__ArrayListFind(CE__ArrayList* self, void* item);
 bool CE__ArrayListContains(CE__ArrayList* self, void* item);
 int CE__removeArrayList(CE__ArrayList* self, size_t index);
+CE__Iterator CE__ArrayListBegin(CE__ArrayList* self);
+bool CE__ArrayListNext(CE__Iterator* it);
+void* CE__ArrayListGet(CE__Iterator* it);

@@ -14,28 +14,40 @@ int main() {
   CE__appendArrayList(&arr, &(int){8});
   CE__appendArrayList(&arr, &(int){9});
 
-  for (size_t i = 0; i < arr.length; i++)
-    printf("%d\n", *(arr.buffer + i * arr.element_size));
+  CE__Iterator it = CE__ArrayListBegin(&arr);
+
+  do {
+    printf("%d\n", castderef(int, it.get(&it)));
+  } while (it.next(&it));
   
   puts("Inserting...");
   CE__insertArrayList(&arr, 6, &(int){9});
 
-  for (size_t i = 0; i < arr.length; i++)
-    printf("%d\n", *(arr.buffer + i * arr.element_size));
+  it = CE__ArrayListBegin(&arr);
+
+  do {
+    printf("%d\n", castderef(int, it.get(&it)));
+  } while (it.next(&it));
 
   printf("Contains 7: %d\n", CE__ArrayListContains(&arr, &(int){7}));
 
   puts("Remove index 6");
   CE__removeArrayList(&arr, 6);
 
-  for (size_t i = 0; i < arr.length; i++)
-    printf("%d\n", *(arr.buffer + i * arr.element_size));
+  it = CE__ArrayListBegin(&arr);
+
+  do {
+    printf("%d\n", castderef(int, it.get(&it)));
+  } while (it.next(&it));
 
   puts("Section...");
   CE__ArrayListView sec = CE__ArrayListSection(&arr, 3, 8);
 
-  for (size_t i = 0; i < sec->length; i++)
-    printf("%d\n", *(sec->buffer + i * sec->element_size));
+  it = CE__ArrayListBegin(sec);
+
+  do {
+    printf("%d\n", castderef(int, it.get(&it)));
+  } while (it.next(&it));
 
   puts("Freeing...");
   CE__freeArrayList(&arr);
