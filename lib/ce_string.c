@@ -141,8 +141,8 @@ bool CE__strequ(CE__String* self, CE__String* other) {
 }
 
 char* CE__strcstr(CE__String* self) {
-  guard(self == nullptr, VALUE_IS_NULL);
-  guard(self->isfreed, VALUE_IS_FREED);
+  guard(self == nullptr, nullptr);
+  guard(self->isfreed, nullptr);
 
   char* temp = (char*)malloc(self->bytelen+1);
   memcpy(temp, self->buffer, self->bytelen);
