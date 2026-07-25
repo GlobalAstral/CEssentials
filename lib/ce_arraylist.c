@@ -1,4 +1,5 @@
 #include <CEssentials.h>
+#include <CE__Iterator.h>
 
 #define DEFAULT_CAP 16
 #define ceil(a, b) ((a + b - 1) / b)
@@ -124,7 +125,30 @@ int CE__removeArrayList(CE__ArrayList* self, size_t index) {
   return OK;
 }
 
-byte* CE__ArrayListPtr(CE__ArrayList* self) {
+CE__Iterator CE__ArrayListBegin(CE__ArrayList* self) {
   ArrayListSecret secret = self->__internal;
-  return secret->buffer;
+  return (CE__Iterator) {
+    .index = 0,
+    .length = self->length,
+    .__internal = newITS((struct IteratorSecret) {
+      .pointer = secret->buffer,
+      .step = self->element_size,
+      .next = CE__ArrayListNext,
+      .get = CE__ArrayListGet
+    })
+  };
+}
+
+bool CE__ArrayListNext(CE__Iterator* it) {
+  if (it->index >= it->length - 1)
+    return false;
+  IteratorSecret secret = it->__internal;
+  secret->pointer += secret->step;
+  it->index++;
+  return true;
+}
+
+void* CE__ArrayListGet(CE__Iterator* it) {
+  IteratorSecret secret = it->__internal;
+  return secret->pointer;
 }
