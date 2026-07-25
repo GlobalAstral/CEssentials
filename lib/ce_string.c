@@ -4,12 +4,25 @@
 #define ceil(a, b) ((a + b - 1) / b)
 #define getcap(size) (ceil(size, DEFAULT_CAP) * DEFAULT_CAP)
 
+typedef struct StringSecret {
+  byte* buffer;
+  size_t capacity;
+  bool isfreed;
+} *StringSecret;
+
+StringSecret newSS(struct StringSecret secret) {
+  StringSecret ret = (StringSecret)malloc(sizeof(struct StringSecret));
+  *ret = secret;
+  return ret;
+}
+
 size_t CE__utf8len(CE__String* s) {
-  guard(s->isfreed, VALUE_IS_FREED);
+  StringSecret secret = s->__internal;
+  guard(secret->isfreed, VALUE_IS_FREED);
 
   size_t count = 0;
   for (size_t i = 0; i < s->bytelen; i++) {
-    byte c = s->buffer[i];
+    byte c = secret->buffer[i];
     if ((c & 0xC0) != 0x80)
       count++;
   }
@@ -28,47 +41,55 @@ CE__String CE__newStringLen(char* init, size_t size) {
   CE__String ret;
   if (!init) {
     ret.bytelen = 0;
-    ret.buffer = nullptr;
+    ret.__internal = newSS((struct StringSecret) {
+      .buffer = nullptr
+    });
     CE__strRealloc(&ret, size);
     ret.length = 0;
     return ret;
   }
 
   ret.bytelen = size;
-  ret.buffer = nullptr;
+  ret.__internal = newSS((struct StringSecret) {
+    .buffer = nullptr
+  });
+  StringSecret secret = ret.__internal;
   CE__strRealloc(&ret, ret.bytelen);
-  memcpy(ret.buffer, init, ret.bytelen);
+  memcpy(secret->buffer, init, ret.bytelen);
   ret.length = CE__utf8len(&ret);
   return ret;
 }
 
 void CE__freeString(CE__String* s) {
-  free(s->buffer);
-  s->isfreed = true;
+  StringSecret secret = s->__internal;
+  free(secret->buffer);
+  free(secret);
 }
 
 int CE__strRealloc(CE__String* s, size_t size) {
+  StringSecret secret = s->__internal;
   size_t needed_size = getcap(size);
-  byte* new_buf = (byte*)realloc(s->buffer, needed_size);
+  byte* new_buf = (byte*)realloc(secret->buffer, needed_size);
 
   guard(!new_buf, CANNOT_ALLOCATE);
   
-  s->buffer = new_buf;
-  s->capacity = needed_size;
-  s->isfreed = false;
+  secret->buffer = new_buf;
+  secret->capacity = needed_size;
+  secret->isfreed = false;
   return OK;
 }
 
 size_t CE__utf8_byte_index(CE__String* target, size_t index) {
+  StringSecret secret = target->__internal;
   guard(target == nullptr, VALUE_IS_NULL);
-  guard(target->isfreed, VALUE_IS_FREED);
+  guard(secret->isfreed, VALUE_IS_FREED);
   guard(index == 0, 0);
   guard(index == target->length, target->bytelen);
 
   size_t codepoint = 0;
 
   for (size_t i = 0; i < target->bytelen; i++) {
-    if ((target->buffer[i] & 0xC0) != 0x80) {
+    if ((secret->buffer[i] & 0xC0) != 0x80) {
       guard(codepoint == index, i);
       codepoint++;
     }
@@ -78,21 +99,23 @@ size_t CE__utf8_byte_index(CE__String* target, size_t index) {
 }
 
 int CE__insertString(CE__String* self, size_t index, CE__String* other) {
+  StringSecret secret = self->__internal;
+  StringSecret osecret = other->__internal;
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(self->isfreed, VALUE_IS_FREED);
+  guard(secret->isfreed, VALUE_IS_FREED);
   guard(other == nullptr, OTHER_VALUE_IS_NULL);
-  guard(other->isfreed, OTHER_VALUE_IS_FREED);
+  guard(osecret->isfreed, OTHER_VALUE_IS_FREED);
   guard(index > self->length, INDEX_OUT_OF_BOUNDS);
   size_t totalsize = self->bytelen + other->bytelen;
-  if (self->capacity < totalsize)
+  if (secret->capacity < totalsize)
     guard(CE__strRealloc(self, totalsize), CANNOT_ALLOCATE);
 
-  if (totalsize < self->capacity / 4) {
+  if (totalsize < secret->capacity / 4) {
     guard(CE__strRealloc(self, totalsize), CANNOT_ALLOCATE);
   }
 
   if (index == self->length) {
-    memcpy(self->buffer + self->bytelen, other->buffer, other->bytelen);
+    memcpy(secret->buffer + self->bytelen, osecret->buffer, other->bytelen);
     self->length += other->length;
     self->bytelen += other->bytelen;
     return OK;
@@ -100,8 +123,8 @@ int CE__insertString(CE__String* self, size_t index, CE__String* other) {
 
   size_t byteindex = CE__utf8_byte_index(self, index);
 
-  memmove( (self->buffer + byteindex + other->bytelen), (self->buffer + byteindex), (self->bytelen - byteindex + 1) );
-  memcpy( (self->buffer + byteindex), other->buffer, other->bytelen);
+  memmove( (secret->buffer + byteindex + other->bytelen), (secret->buffer + byteindex), (self->bytelen - byteindex + 1) );
+  memcpy( (secret->buffer + byteindex), osecret->buffer, other->bytelen);
 
   self->length += other->length;
   self->bytelen += other->bytelen;
@@ -109,8 +132,9 @@ int CE__insertString(CE__String* self, size_t index, CE__String* other) {
   return OK;
 }
 int CE__insertCstr(CE__String* self, size_t index, char* s) {
+  StringSecret secret = self->__internal;
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(self->isfreed, VALUE_IS_FREED);
+  guard(secret->isfreed, VALUE_IS_FREED);
   guard(!s, OTHER_VALUE_IS_NULL);
 
   CE__String temp = CE__newString(s);
@@ -126,8 +150,10 @@ int CE__appendCstr(CE__String* self, char* other) {
 }
 
 int CE__strcmp(CE__String* self, CE__String* other) {
+  StringSecret secret = self->__internal;
+  StringSecret osecret = other->__internal;
   size_t n = self->bytelen < other->bytelen ? self->bytelen : other->bytelen;
-  int result = memcmp(self->buffer, other->buffer, n);
+  int result = memcmp(secret->buffer, osecret->buffer, n);
 
   if (result < 0) return -1;
   if (result > 0) return 1;
@@ -141,32 +167,39 @@ bool CE__strequ(CE__String* self, CE__String* other) {
 }
 
 char* CE__strcstr(CE__String* self) {
+  StringSecret secret = self->__internal;
   guard(self == nullptr, nullptr);
-  guard(self->isfreed, nullptr);
+  guard(secret->isfreed, nullptr);
 
   char* temp = (char*)malloc(self->bytelen+1);
-  memcpy(temp, self->buffer, self->bytelen);
+  memcpy(temp, secret->buffer, self->bytelen);
   temp[self->bytelen] = 0;
   return temp;
 }
 
 CE__StrView CE__substr(CE__String* self, size_t start, size_t end) {
-  guard(self == nullptr || self->isfreed || start > self->length || end > self->length, nullptr);
+  StringSecret secret = self->__internal;
+  guard(self == nullptr || secret->isfreed || start > self->length || end > self->length, nullptr);
 
   size_t bstart = CE__utf8_byte_index(self, start);
   size_t bend = CE__utf8_byte_index(self, end);
   CE__StrView r = (CE__StrView)malloc(sizeof(CE__String));
   *r = (CE__String) {
-    .buffer = self->buffer + bstart,
-    .capacity = self->capacity - bstart,
     .length = end - start,
-    .bytelen = bend - bstart
+    .bytelen = bend - bstart,
+    .__internal = newSS((struct StringSecret) {
+      .buffer = secret->buffer + bstart,
+      .capacity = secret->capacity - bstart,
+      .isfreed = false
+    })
   };
   return r;
 }
 
 CE__StrView CE__strfind(CE__String* self, CE__String* find) {
-  guard(self == nullptr || find == nullptr || self->isfreed || find->isfreed, nullptr);
+  StringSecret secret = self->__internal;
+  StringSecret fsecret = find->__internal;
+  guard(self == nullptr || find == nullptr || secret->isfreed || fsecret->isfreed, nullptr);
 
   for (size_t i = 0; i < self->length - find->length; i++) {
     CE__StrView sub = CE__substr(self, i, i + find->length);
@@ -197,8 +230,9 @@ int CE__fprintstr(FILE* stream, CE__String* self) {
 }
 
 int CE__strdrain(CE__String* self, size_t start, size_t end) {
+  StringSecret secret = self->__internal;
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(self->isfreed, VALUE_IS_FREED);
+  guard(secret->isfreed, VALUE_IS_FREED);
   guard(start > self->length || end > self->length, INDEX_OUT_OF_BOUNDS);
   
   size_t bstart = CE__utf8_byte_index(self, start);
@@ -209,7 +243,7 @@ int CE__strdrain(CE__String* self, size_t start, size_t end) {
     return OK;
   }
 
-  memmove(self->buffer + bstart, self->buffer + bend, self->bytelen - bend + 1);
+  memmove(secret->buffer + bstart, secret->buffer + bend, self->bytelen - bend + 1);
   self->length -= end - start;
   self->bytelen -= bend - bstart;
 
@@ -222,4 +256,9 @@ size_t CE__utf8_char_size(byte b) {
   if ((b & 0xF0) == 0xE0) return 3;
   if ((b & 0xF8) == 0xF0) return 4;
   return 0;
+}
+
+char* CE__strptr(CE__String* s) {
+  StringSecret secret = s->__internal;
+  return secret->buffer;
 }

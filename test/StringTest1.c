@@ -8,7 +8,8 @@ int main() {
 
   CE__insertString(&s1, 11, &s2);
 
-  printf("result: %s", s1.buffer);
+  printf("result: ");
+  CE__printstr(&s1);
 
   CE__freeString(&s1);
   CE__freeString(&s2);

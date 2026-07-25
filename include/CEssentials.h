@@ -32,11 +32,9 @@ void* CE__IteratorGet(CE__Iterator* it);
 void CE__IteratorDispose(CE__Iterator* it);
 
 typedef struct CE__String {
-  byte* buffer;
-  size_t capacity;
   size_t bytelen;
   size_t length;
-  bool isfreed;
+  void* __internal;
 } CE__String, *CE__StrView;
 
 size_t CE__utf8len(CE__String* s);
@@ -61,6 +59,8 @@ int CE__strdrain(CE__String* self, size_t start, size_t end);
 CE__Iterator CE__strbegin(CE__String* str);
 bool CE__strnext(CE__Iterator* it);
 void* CE__strget(CE__Iterator* it);
+size_t CE__utf8_char_size(byte b);
+char* CE__strptr(CE__String* s);
 
 typedef struct CE__ArrayList {
   byte* buffer;

@@ -36,7 +36,7 @@ CE__Iterator CE__strbegin(CE__String* str) {
     .index = 0,
     .length = str->length,
     .__internal = newITS((struct IteratorSecret) {
-      .pointer = str->buffer,
+      .pointer = CE__strptr(str),
       .step = 0,
       .next = CE__strnext,
       .get = CE__strget
