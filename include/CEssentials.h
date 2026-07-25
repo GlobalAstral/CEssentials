@@ -10,9 +10,9 @@
 #define OTHER_VALUE_IS_NULL -2
 #define VALUE_IS_FREED -3
 #define OTHER_VALUE_IS_FREED -4
-#define CANNOT_ALLOCATE -4
-#define INDEX_OUT_OF_BOUNDS -5
-#define TYPE_EMPTY -6
+#define CANNOT_ALLOCATE -5
+#define INDEX_OUT_OF_BOUNDS -6
+#define TYPE_EMPTY -7
 
 #define nullptr NULL
 #define loop while(true)
@@ -63,11 +63,9 @@ size_t CE__utf8_char_size(byte b);
 char* CE__strptr(CE__String* s);
 
 typedef struct CE__ArrayList {
-  byte* buffer;
-  size_t capacity;
   size_t length;
   size_t element_size;
-  bool isfreed;
+  void* __internal;
 } CE__ArrayList, *CE__ArrayListView;
 
 CE__ArrayList CE__newArrayList(size_t element_size);
@@ -82,3 +80,4 @@ int CE__removeArrayList(CE__ArrayList* self, size_t index);
 CE__Iterator CE__ArrayListBegin(CE__ArrayList* self);
 bool CE__ArrayListNext(CE__Iterator* it);
 void* CE__ArrayListGet(CE__Iterator* it);
+byte* CE__ArrayListPtr(CE__ArrayList* self);

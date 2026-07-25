@@ -7,7 +7,6 @@
 typedef struct StringSecret {
   byte* buffer;
   size_t capacity;
-  bool isfreed;
 } *StringSecret;
 
 StringSecret newSS(struct StringSecret secret) {
@@ -18,7 +17,7 @@ StringSecret newSS(struct StringSecret secret) {
 
 size_t CE__utf8len(CE__String* s) {
   StringSecret secret = s->__internal;
-  guard(secret->isfreed, VALUE_IS_FREED);
+  guard(secret == nullptr, VALUE_IS_FREED);
 
   size_t count = 0;
   for (size_t i = 0; i < s->bytelen; i++) {
@@ -75,14 +74,13 @@ int CE__strRealloc(CE__String* s, size_t size) {
   
   secret->buffer = new_buf;
   secret->capacity = needed_size;
-  secret->isfreed = false;
   return OK;
 }
 
 size_t CE__utf8_byte_index(CE__String* target, size_t index) {
   StringSecret secret = target->__internal;
   guard(target == nullptr, VALUE_IS_NULL);
-  guard(secret->isfreed, VALUE_IS_FREED);
+  guard(secret == nullptr, VALUE_IS_FREED);
   guard(index == 0, 0);
   guard(index == target->length, target->bytelen);
 
@@ -102,9 +100,9 @@ int CE__insertString(CE__String* self, size_t index, CE__String* other) {
   StringSecret secret = self->__internal;
   StringSecret osecret = other->__internal;
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(secret->isfreed, VALUE_IS_FREED);
+  guard(secret == nullptr, VALUE_IS_FREED);
   guard(other == nullptr, OTHER_VALUE_IS_NULL);
-  guard(osecret->isfreed, OTHER_VALUE_IS_FREED);
+  guard(osecret == nullptr, OTHER_VALUE_IS_FREED);
   guard(index > self->length, INDEX_OUT_OF_BOUNDS);
   size_t totalsize = self->bytelen + other->bytelen;
   if (secret->capacity < totalsize)
@@ -134,7 +132,7 @@ int CE__insertString(CE__String* self, size_t index, CE__String* other) {
 int CE__insertCstr(CE__String* self, size_t index, char* s) {
   StringSecret secret = self->__internal;
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(secret->isfreed, VALUE_IS_FREED);
+  guard(secret == nullptr, VALUE_IS_FREED);
   guard(!s, OTHER_VALUE_IS_NULL);
 
   CE__String temp = CE__newString(s);
@@ -169,7 +167,7 @@ bool CE__strequ(CE__String* self, CE__String* other) {
 char* CE__strcstr(CE__String* self) {
   StringSecret secret = self->__internal;
   guard(self == nullptr, nullptr);
-  guard(secret->isfreed, nullptr);
+  guard(secret == nullptr, nullptr);
 
   char* temp = (char*)malloc(self->bytelen+1);
   memcpy(temp, secret->buffer, self->bytelen);
@@ -179,7 +177,7 @@ char* CE__strcstr(CE__String* self) {
 
 CE__StrView CE__substr(CE__String* self, size_t start, size_t end) {
   StringSecret secret = self->__internal;
-  guard(self == nullptr || secret->isfreed || start > self->length || end > self->length, nullptr);
+  guard(self == nullptr || secret == nullptr || start > self->length || end > self->length, nullptr);
 
   size_t bstart = CE__utf8_byte_index(self, start);
   size_t bend = CE__utf8_byte_index(self, end);
@@ -190,7 +188,6 @@ CE__StrView CE__substr(CE__String* self, size_t start, size_t end) {
     .__internal = newSS((struct StringSecret) {
       .buffer = secret->buffer + bstart,
       .capacity = secret->capacity - bstart,
-      .isfreed = false
     })
   };
   return r;
@@ -199,7 +196,7 @@ CE__StrView CE__substr(CE__String* self, size_t start, size_t end) {
 CE__StrView CE__strfind(CE__String* self, CE__String* find) {
   StringSecret secret = self->__internal;
   StringSecret fsecret = find->__internal;
-  guard(self == nullptr || find == nullptr || secret->isfreed || fsecret->isfreed, nullptr);
+  guard(self == nullptr || find == nullptr || secret == nullptr || fsecret == nullptr, nullptr);
 
   for (size_t i = 0; i < self->length - find->length; i++) {
     CE__StrView sub = CE__substr(self, i, i + find->length);
@@ -232,7 +229,7 @@ int CE__fprintstr(FILE* stream, CE__String* self) {
 int CE__strdrain(CE__String* self, size_t start, size_t end) {
   StringSecret secret = self->__internal;
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(secret->isfreed, VALUE_IS_FREED);
+  guard(secret == nullptr, VALUE_IS_FREED);
   guard(start > self->length || end > self->length, INDEX_OUT_OF_BOUNDS);
   
   size_t bstart = CE__utf8_byte_index(self, start);
