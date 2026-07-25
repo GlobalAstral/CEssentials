@@ -216,33 +216,10 @@ int CE__strdrain(CE__String* self, size_t start, size_t end) {
   return OK;
 }
 
-CE__Iterator CE__strbegin(CE__String* str) {
-  return (CE__Iterator) {
-    .pointer = str->buffer,
-    .index = 0,
-    .length = str->length,
-    .step = 0,
-    .next = CE__strnext,
-    .get = CE__strget
-  };
-}
-
 size_t CE__utf8_char_size(byte b) {
   if ((b & 0x80) == 0) return 1;
   if ((b & 0xE0) == 0xC0) return 2;
   if ((b & 0xF0) == 0xE0) return 3;
   if ((b & 0xF8) == 0xF0) return 4;
   return 0;
-}
-
-bool CE__strnext(CE__Iterator* it) {
-  if (it->index >= it->length - 1)
-    return false;
-  it->pointer += CE__utf8_char_size(*(it->pointer));
-  it->index++;
-  return true;
-}
-
-void* CE__strget(CE__Iterator* it) {
-  return it->pointer;
 }

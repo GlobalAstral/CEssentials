@@ -21,21 +21,15 @@
 
 typedef unsigned char byte;
 
-typedef struct CE__Iterator CE__Iterator; 
-
-typedef bool (*CE__Iterator__NextFunc)(CE__Iterator*);
-typedef void* (*CE__Iterator__GetFunc)(CE__Iterator*);
-
 typedef struct CE__Iterator {
-  byte* pointer;
   size_t index;
   size_t length;
-  size_t step;
-
-  CE__Iterator__NextFunc next;
-  CE__Iterator__GetFunc get;
-
+  void* __internal;
 } CE__Iterator;
+
+bool CE__IteratorNext(CE__Iterator* it);
+void* CE__IteratorGet(CE__Iterator* it);
+void CE__IteratorDispose(CE__Iterator* it);
 
 typedef struct CE__String {
   byte* buffer;
