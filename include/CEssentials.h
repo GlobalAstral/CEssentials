@@ -29,7 +29,7 @@ typedef struct CE__Iterator {
 
 bool CE__IteratorNext(CE__Iterator* it);
 void* CE__IteratorGet(CE__Iterator* it);
-void CE__IteratorDispose(CE__Iterator* it);
+void CE__FreeIterator(CE__Iterator* it);
 
 typedef struct CE__String {
   size_t bytelen;

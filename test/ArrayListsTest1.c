@@ -23,7 +23,7 @@ int main() {
   puts("Inserting...");
   CE__insertArrayList(&arr, 6, &(int){9});
 
-  CE__IteratorDispose(&it);
+  CE__FreeIterator(&it);
   it = CE__ArrayListBegin(&arr);
 
   do {
@@ -35,7 +35,7 @@ int main() {
   puts("Remove index 6");
   CE__removeArrayList(&arr, 6);
 
-  CE__IteratorDispose(&it);
+  CE__FreeIterator(&it);
   it = CE__ArrayListBegin(&arr);
 
   do {
@@ -45,7 +45,7 @@ int main() {
   puts("Section...");
   CE__ArrayListView sec = CE__ArrayListSection(&arr, 3, 8);
 
-  CE__IteratorDispose(&it);
+  CE__FreeIterator(&it);
   it = CE__ArrayListBegin(sec);
 
   do {
@@ -54,7 +54,7 @@ int main() {
 
   
   puts("Freeing...");
-  CE__IteratorDispose(&it);
+  CE__FreeIterator(&it);
   CE__freeArrayList(&arr);
   return 0;
 }
