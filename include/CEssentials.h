@@ -37,6 +37,7 @@ typedef struct CE__String {
   void* __internal;
 } CE__String, *CE__StrView;
 
+size_t CE__utf8_char_size(byte b);
 size_t CE__utf8len(CE__String* s);
 CE__String CE__newString(char* init);
 CE__String CE__newStringLen(char* init, size_t size);
@@ -59,9 +60,6 @@ int CE__strdrain(CE__String* self, size_t start, size_t end);
 CE__Iterator CE__strbegin(CE__String* str);
 bool CE__strnext(CE__Iterator* it);
 void* CE__strget(CE__Iterator* it);
-size_t CE__utf8_char_size(byte b);
-char* CE__strptr(CE__String* s);
-
 typedef struct CE__ArrayList {
   size_t length;
   size_t element_size;
@@ -80,4 +78,3 @@ int CE__removeArrayList(CE__ArrayList* self, size_t index);
 CE__Iterator CE__ArrayListBegin(CE__ArrayList* self);
 bool CE__ArrayListNext(CE__Iterator* it);
 void* CE__ArrayListGet(CE__Iterator* it);
-byte* CE__ArrayListPtr(CE__ArrayList* self);
