@@ -262,3 +262,24 @@ CE__Iterator CE__strbegin(CE__String str) {
   };
   return ret;
 }
+
+bool CE__strprev(CE__Iterator it) {
+  if (it->index == 0)
+    return false;
+  it->pointer -= CE__utf8_char_size(*(it->pointer));
+  it->index--;
+  return true;
+}
+
+CE__Iterator CE__strrbegin(CE__String str) {
+  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  *ret = (struct CE__Iterator) {
+    .index = str->length - 1,
+    .length = str->length,
+    .pointer = str->buffer + CE__utf8_byte_index(str, str->length - 1),
+    .step = 0,
+    .next = CE__strprev,
+    .get = CE__strget
+  };
+  return ret;
+}

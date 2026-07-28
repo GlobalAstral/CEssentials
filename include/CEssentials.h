@@ -28,7 +28,6 @@ size_t CE__IteratorLength(CE__Iterator it);
 bool CE__IteratorNext(CE__Iterator it);
 void* CE__IteratorGet(CE__Iterator it);
 void CE__FreeIterator(CE__Iterator it);
-//TODO MAKE ITERATOR BEGIN REVERSED AND PREV
 
 typedef struct CE__String *CE__String;
 
@@ -55,6 +54,7 @@ int CE__printstr(CE__String self);
 int CE__fprintstr(FILE* stream, CE__String self);
 int CE__strdrain(CE__String self, size_t start, size_t end);
 CE__Iterator CE__strbegin(CE__String str);
+CE__Iterator CE__strrbegin(CE__String str);
 
 typedef struct CE__ArrayList *CE__ArrayList;
 
@@ -70,6 +70,7 @@ void* CE__ArrayListFind(CE__ArrayList self, void* item);
 bool CE__ArrayListContains(CE__ArrayList self, void* item);
 int CE__removeArrayList(CE__ArrayList self, size_t index);
 CE__Iterator CE__ArrayListBegin(CE__ArrayList self);
+CE__Iterator CE__ArrayListRBegin(CE__ArrayList self);
 
 typedef struct CE__LinkedList *CE__LinkedList;
 
@@ -82,3 +83,4 @@ void* CE__LinkedListFind(CE__LinkedList ll, void* item);
 bool CE__LinkedListContains(CE__LinkedList ll, void* item);
 int CE__removeLinkedList(CE__LinkedList ll, size_t index);
 CE__Iterator CE__LinkedListBegin(CE__LinkedList ll);
+CE__Iterator CE__LinkedListRBegin(CE__LinkedList ll);

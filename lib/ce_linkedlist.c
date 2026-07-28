@@ -173,6 +173,7 @@ bool CE__LinkedListNext(CE__Iterator it) {
   if (node->next == nullptr)
     return false;
   it->pointer = (byte*)node->next;
+  return true;
 }
 
 void* CE__LinkedListGet(CE__Iterator it) {
@@ -191,6 +192,27 @@ CE__Iterator CE__LinkedListBegin(CE__LinkedList ll) {
     .pointer = (byte*)ll->head,
     .get = CE__LinkedListGet,
     .next = CE__LinkedListNext,
+  };
+  return ret;
+}
+
+bool CE__LinkedListPrev(CE__Iterator it) {
+  CE__LLNode* node = (CE__LLNode*)it->pointer;
+  if (node->previous == nullptr)
+    return false;
+  it->pointer = (byte*)node->previous;
+  return true;
+}
+
+CE__Iterator CE__LinkedListRBegin(CE__LinkedList ll) {
+  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  *ret = (struct CE__Iterator) {
+    .length = ll->length,
+    .index = ll->length-1,
+    .step = 0,
+    .pointer = (byte*)ll->tail,
+    .get = CE__LinkedListGet,
+    .next = CE__LinkedListPrev,
   };
   return ret;
 }

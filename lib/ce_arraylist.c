@@ -141,3 +141,24 @@ CE__Iterator CE__ArrayListBegin(CE__ArrayList self) {
   };
   return ret;
 }
+
+bool CE__ArrayListPrev(CE__Iterator it) {
+  if (it->index == 0)
+    return false;
+  it->pointer -= it->step;
+  it->index--;
+  return true;
+}
+
+CE__Iterator CE__ArrayListRBegin(CE__ArrayList self) {
+  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  *ret = (struct CE__Iterator) {
+    .index = self->length-1,
+    .length = self->length,
+    .pointer = self->buffer + (self->length - 1) * self->element_size,
+    .step = self->element_size,
+    .next = CE__ArrayListPrev,
+    .get = CE__ArrayListGet
+  };
+  return ret;
+}
