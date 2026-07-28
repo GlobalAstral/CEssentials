@@ -117,29 +117,27 @@ int CE__removeArrayList(CE__ArrayList self, size_t index) {
   return OK;
 }
 
-bool CE__ArrayListNext(CE__Iterator* it) {
+bool CE__ArrayListNext(CE__Iterator it) {
   if (it->index >= it->length - 1)
     return false;
-  IteratorSecret secret = it->__internal;
-  secret->pointer += secret->step;
+  it->pointer += it->step;
   it->index++;
   return true;
 }
 
-void* CE__ArrayListGet(CE__Iterator* it) {
-  IteratorSecret secret = it->__internal;
-  return secret->pointer;
+void* CE__ArrayListGet(CE__Iterator it) {
+  return it->pointer;
 }
 
 CE__Iterator CE__ArrayListBegin(CE__ArrayList self) {
-  return (CE__Iterator) {
+  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  *ret = (struct CE__Iterator) {
     .index = 0,
     .length = self->length,
-    .__internal = newITS((struct IteratorSecret) {
-      .pointer = self->buffer,
-      .step = self->element_size,
-      .next = CE__ArrayListNext,
-      .get = CE__ArrayListGet
-    })
+    .pointer = self->buffer,
+    .step = self->element_size,
+    .next = CE__ArrayListNext,
+    .get = CE__ArrayListGet
   };
+  return ret;
 }

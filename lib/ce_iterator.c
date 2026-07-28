@@ -1,27 +1,26 @@
 #include <CEssentials.h>
 #include <CE__Iterator.h>
 
-IteratorSecret newITS(struct IteratorSecret secret) {
-  IteratorSecret ret = (IteratorSecret)malloc(sizeof(struct IteratorSecret));
-  *ret = secret;
-  return ret;
+size_t CE__IteratorIndex(CE__Iterator it) {
+  return it->index;
 }
 
-bool CE__IteratorNext(CE__Iterator* it) {
+size_t CE__IteratorLength(CE__Iterator it) {
+  return it->length;
+}
+
+bool CE__IteratorNext(CE__Iterator it) {
   guard(it == nullptr, false);
-  guard(it->__internal == nullptr, false);
-  IteratorSecret secret = it->__internal;
-  return secret->next(it);
+  guard(it->pointer == nullptr, false);
+  return it->next(it);
 }
 
-void* CE__IteratorGet(CE__Iterator* it) {
+void* CE__IteratorGet(CE__Iterator it) {
   guard(it == nullptr, nullptr);
-  guard(it->__internal == nullptr, nullptr);
-  IteratorSecret secret = it->__internal;
-  return secret->get(it);
+  guard(it->pointer == nullptr, nullptr);
+  return it->get(it);
 }
 
-void CE__FreeIterator(CE__Iterator* it) {
-  free(it->__internal);
-  it->__internal = nullptr;
+void CE__FreeIterator(CE__Iterator it) {
+  free(it);
 }

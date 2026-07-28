@@ -1,14 +1,16 @@
 #pragma once
 
-typedef bool (*CE__Iterator__NextFunc)(CE__Iterator*);
-typedef void* (*CE__Iterator__GetFunc)(CE__Iterator*);
+#include <CEssentials.h>
 
-typedef struct IteratorSecret {
+typedef bool (*CE__Iterator__NextFunc)(CE__Iterator);
+typedef void* (*CE__Iterator__GetFunc)(CE__Iterator);
+
+struct CE__Iterator {
+  size_t index;
+  size_t length;
   byte* pointer;
   size_t step;
-
+  
   CE__Iterator__NextFunc next;
   CE__Iterator__GetFunc get;
-} *IteratorSecret;
-
-IteratorSecret newITS(struct IteratorSecret secret);
+};

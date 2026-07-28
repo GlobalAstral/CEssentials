@@ -168,31 +168,29 @@ int CE__removeLinkedList(CE__LinkedList ll, size_t index) {
   return OK;
 }
 
-bool CE__LinkedListNext(CE__Iterator* it) {
-  IteratorSecret secret = it->__internal;
-  CE__LLNode* node = (CE__LLNode*)secret->pointer;
+bool CE__LinkedListNext(CE__Iterator it) {
+  CE__LLNode* node = (CE__LLNode*)it->pointer;
   if (node->next == nullptr)
     return false;
-  secret->pointer = (byte*)node->next;
+  it->pointer = (byte*)node->next;
 }
 
-void* CE__LinkedListGet(CE__Iterator* it) {
-  IteratorSecret secret = it->__internal;
-  if (secret->pointer == nullptr)
+void* CE__LinkedListGet(CE__Iterator it) {
+  if (it->pointer == nullptr)
     return nullptr;
-  CE__LLNode* node = (CE__LLNode*)secret->pointer;
+  CE__LLNode* node = (CE__LLNode*)it->pointer;
   return node->item;
 }
 
 CE__Iterator CE__LinkedListBegin(CE__LinkedList ll) {
-  return (CE__Iterator) {
+  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  *ret = (struct CE__Iterator) {
     .length = ll->length,
     .index = 0,
-    .__internal = newITS((struct IteratorSecret) {
-      .step = 0,
-      .pointer = (byte*)ll->head,
-      .get = CE__LinkedListGet,
-      .next = CE__LinkedListNext,
-    })
+    .step = 0,
+    .pointer = (byte*)ll->head,
+    .get = CE__LinkedListGet,
+    .next = CE__LinkedListNext,
   };
+  return ret;
 }

@@ -18,11 +18,11 @@ int main() {
   
   CE__Iterator it = CE__LinkedListBegin(ll);
   do {
-    int x = castderef(int, CE__IteratorGet(&it));
+    int x = castderef(int, CE__IteratorGet(it));
     printf("%d\n", x);
-  } while (CE__IteratorNext(&it));
+  } while (CE__IteratorNext(it));
 
-  CE__FreeIterator(&it);
+  CE__FreeIterator(it);
 
   bool flag = CE__LinkedListContains(ll, &(int){8});
   printf("Contains 8: %d\n", flag);
@@ -32,11 +32,11 @@ int main() {
   it = CE__LinkedListBegin(ll);
 
   do {
-    int x = castderef(int, CE__IteratorGet(&it));
+    int x = castderef(int, CE__IteratorGet(it));
     printf("%d\n", x);
-  } while (CE__IteratorNext(&it));
+  } while (CE__IteratorNext(it));
 
-  CE__FreeIterator(&it);
+  CE__FreeIterator(it);
 
   CE__freeLinkedList(ll);
 

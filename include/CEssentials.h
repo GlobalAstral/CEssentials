@@ -21,15 +21,14 @@
 
 typedef unsigned char byte;
 
-typedef struct CE__Iterator {
-  size_t index;
-  size_t length;
-  void* __internal;
-} CE__Iterator;
+typedef struct CE__Iterator *CE__Iterator;
 
-bool CE__IteratorNext(CE__Iterator* it);
-void* CE__IteratorGet(CE__Iterator* it);
-void CE__FreeIterator(CE__Iterator* it);
+size_t CE__IteratorIndex(CE__Iterator it);
+size_t CE__IteratorLength(CE__Iterator it);
+bool CE__IteratorNext(CE__Iterator it);
+void* CE__IteratorGet(CE__Iterator it);
+void CE__FreeIterator(CE__Iterator it);
+//TODO MAKE ITERATOR BEGIN REVERSED AND PREV
 
 typedef struct CE__String *CE__String;
 
@@ -83,5 +82,3 @@ void* CE__LinkedListFind(CE__LinkedList ll, void* item);
 bool CE__LinkedListContains(CE__LinkedList ll, void* item);
 int CE__removeLinkedList(CE__LinkedList ll, size_t index);
 CE__Iterator CE__LinkedListBegin(CE__LinkedList ll);
-
-//TODO MAKE ALL OTHER STRUCTURE POINTER TYPES. MAKE EVERYTHING OPAQUE AND EXPOSE FUNCTIONS. MAKE ITERATOR BEGIN REVERSED AND PREV

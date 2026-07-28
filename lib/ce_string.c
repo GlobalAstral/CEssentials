@@ -238,29 +238,27 @@ size_t CE__utf8_char_size(byte b) {
   return 0;
 }
 
-bool CE__strnext(CE__Iterator* it) {
+bool CE__strnext(CE__Iterator it) {
   if (it->index >= it->length - 1)
     return false;
-  IteratorSecret secret = it->__internal;
-  secret->pointer += CE__utf8_char_size(*(secret->pointer));
+  it->pointer += CE__utf8_char_size(*(it->pointer));
   it->index++;
   return true;
 }
 
-void* CE__strget(CE__Iterator* it) {
-  IteratorSecret secret = it->__internal;
-  return secret->pointer;
+void* CE__strget(CE__Iterator it) {
+  return it->pointer;
 }
 
 CE__Iterator CE__strbegin(CE__String str) {
-  return (CE__Iterator) {
+  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  *ret = (struct CE__Iterator) {
     .index = 0,
     .length = str->length,
-    .__internal = newITS((struct IteratorSecret) {
-      .pointer = str->buffer,
-      .step = 0,
-      .next = CE__strnext,
-      .get = CE__strget
-    })
+    .pointer = str->buffer,
+    .step = 0,
+    .next = CE__strnext,
+    .get = CE__strget
   };
+  return ret;
 }
