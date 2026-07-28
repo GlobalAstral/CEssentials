@@ -58,22 +58,21 @@ int CE__printstr(CE__String* self);
 int CE__fprintstr(FILE* stream, CE__String* self);
 int CE__strdrain(CE__String* self, size_t start, size_t end);
 CE__Iterator CE__strbegin(CE__String* str);
-typedef struct CE__ArrayList {
-  size_t length;
-  size_t element_size;
-  void* __internal;
-} CE__ArrayList, *CE__ArrayListView;
 
+typedef struct CE__ArrayList *CE__ArrayList;
+
+size_t CE__ArrayListLen(CE__ArrayList self);
+size_t CE__ArrayListEleSz(CE__ArrayList self);
 CE__ArrayList CE__newArrayList(size_t element_size);
-void CE__freeArrayList(CE__ArrayList* list);
-int CE__ArrayListRealloc(CE__ArrayList* list, size_t size);
-int CE__insertArrayList(CE__ArrayList* self, size_t index, void* item);
-int CE__appendArrayList(CE__ArrayList* self, void* item);
-CE__ArrayListView CE__ArrayListSection(CE__ArrayList* self, size_t start, size_t end);
-void* CE__ArrayListFind(CE__ArrayList* self, void* item);
-bool CE__ArrayListContains(CE__ArrayList* self, void* item);
-int CE__removeArrayList(CE__ArrayList* self, size_t index);
-CE__Iterator CE__ArrayListBegin(CE__ArrayList* self);
+void CE__freeArrayList(CE__ArrayList list);
+int CE__ArrayListRealloc(CE__ArrayList list, size_t size);
+int CE__insertArrayList(CE__ArrayList self, size_t index, void* item);
+int CE__appendArrayList(CE__ArrayList self, void* item);
+CE__ArrayList CE__ArrayListSection(CE__ArrayList self, size_t start, size_t end);
+void* CE__ArrayListFind(CE__ArrayList self, void* item);
+bool CE__ArrayListContains(CE__ArrayList self, void* item);
+int CE__removeArrayList(CE__ArrayList self, size_t index);
+CE__Iterator CE__ArrayListBegin(CE__ArrayList self);
 
 typedef struct CE__LinkedList *CE__LinkedList;
 
