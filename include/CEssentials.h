@@ -97,3 +97,9 @@ void* CE__popStack(CE__Stack stack);
 void* CE__peekStack(CE__Stack stack);
 CE__Iterator CE__StackBegin(CE__Stack stack);
 CE__Iterator CE__StackRBegin(CE__Stack stack);
+
+//TODO BitSet
+//TODO BitArray
+//TODO Logger
+//TODO HashMap
+//TODO HashSet
