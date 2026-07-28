@@ -19,6 +19,12 @@ add_executable(ArrayListsTest1
 )
 target_link_libraries(ArrayListsTest1 PRIVATE CEssentials)
 
+add_executable(LinkedListsTest
+  "LinkedListsTest.c"
+)
+target_link_libraries(LinkedListsTest PRIVATE CEssentials)
+
+
 enable_testing()
 
 add_test(
@@ -39,4 +45,9 @@ add_test(
 add_test(
   NAME ArrayListsTest1
   COMMAND "ArrayListsTest1"
+)
+
+add_test(
+  NAME LinkedListsTest
+  COMMAND "LinkedListsTest"
 )

@@ -256,20 +256,6 @@ size_t CE__utf8_char_size(byte b) {
   return 0;
 }
 
-CE__Iterator CE__strbegin(CE__String* str) {
-  StringSecret secret = str->__internal;
-  return (CE__Iterator) {
-    .index = 0,
-    .length = str->length,
-    .__internal = newITS((struct IteratorSecret) {
-      .pointer = secret->buffer,
-      .step = 0,
-      .next = CE__strnext,
-      .get = CE__strget
-    })
-  };
-}
-
 bool CE__strnext(CE__Iterator* it) {
   if (it->index >= it->length - 1)
     return false;
@@ -282,4 +268,18 @@ bool CE__strnext(CE__Iterator* it) {
 void* CE__strget(CE__Iterator* it) {
   IteratorSecret secret = it->__internal;
   return secret->pointer;
+}
+
+CE__Iterator CE__strbegin(CE__String* str) {
+  StringSecret secret = str->__internal;
+  return (CE__Iterator) {
+    .index = 0,
+    .length = str->length,
+    .__internal = newITS((struct IteratorSecret) {
+      .pointer = secret->buffer,
+      .step = 0,
+      .next = CE__strnext,
+      .get = CE__strget
+    })
+  };
 }

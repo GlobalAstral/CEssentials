@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} STATIC
   "lib/ce_string.c"
   "lib/ce_arraylist.c"
   "lib/ce_iterator.c"
+  "lib/ce_linkedlist.c"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")

@@ -125,20 +125,6 @@ int CE__removeArrayList(CE__ArrayList* self, size_t index) {
   return OK;
 }
 
-CE__Iterator CE__ArrayListBegin(CE__ArrayList* self) {
-  ArrayListSecret secret = self->__internal;
-  return (CE__Iterator) {
-    .index = 0,
-    .length = self->length,
-    .__internal = newITS((struct IteratorSecret) {
-      .pointer = secret->buffer,
-      .step = self->element_size,
-      .next = CE__ArrayListNext,
-      .get = CE__ArrayListGet
-    })
-  };
-}
-
 bool CE__ArrayListNext(CE__Iterator* it) {
   if (it->index >= it->length - 1)
     return false;
@@ -151,4 +137,18 @@ bool CE__ArrayListNext(CE__Iterator* it) {
 void* CE__ArrayListGet(CE__Iterator* it) {
   IteratorSecret secret = it->__internal;
   return secret->pointer;
+}
+
+CE__Iterator CE__ArrayListBegin(CE__ArrayList* self) {
+  ArrayListSecret secret = self->__internal;
+  return (CE__Iterator) {
+    .index = 0,
+    .length = self->length,
+    .__internal = newITS((struct IteratorSecret) {
+      .pointer = secret->buffer,
+      .step = self->element_size,
+      .next = CE__ArrayListNext,
+      .get = CE__ArrayListGet
+    })
+  };
 }

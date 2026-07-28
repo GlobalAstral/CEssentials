@@ -58,8 +58,6 @@ int CE__printstr(CE__String* self);
 int CE__fprintstr(FILE* stream, CE__String* self);
 int CE__strdrain(CE__String* self, size_t start, size_t end);
 CE__Iterator CE__strbegin(CE__String* str);
-bool CE__strnext(CE__Iterator* it);
-void* CE__strget(CE__Iterator* it);
 typedef struct CE__ArrayList {
   size_t length;
   size_t element_size;
@@ -76,5 +74,17 @@ void* CE__ArrayListFind(CE__ArrayList* self, void* item);
 bool CE__ArrayListContains(CE__ArrayList* self, void* item);
 int CE__removeArrayList(CE__ArrayList* self, size_t index);
 CE__Iterator CE__ArrayListBegin(CE__ArrayList* self);
-bool CE__ArrayListNext(CE__Iterator* it);
-void* CE__ArrayListGet(CE__Iterator* it);
+
+typedef struct CE__LinkedList *CE__LinkedList;
+
+size_t CE__LinkedListLen(CE__LinkedList ll);
+CE__LinkedList CE__newLinkedList(size_t element_size);
+void CE__freeLinkedList(CE__LinkedList ll);
+int CE__insertLinkedList(CE__LinkedList ll, size_t index, void* element);
+int CE__appendLinkedList(CE__LinkedList ll, void* element);
+void* CE__LinkedListFind(CE__LinkedList ll, void* item);
+bool CE__LinkedListContains(CE__LinkedList ll, void* item);
+int CE__removeLinkedList(CE__LinkedList ll, size_t index);
+CE__Iterator CE__LinkedListBegin(CE__LinkedList ll);
+
+//TODO MAKE ALL OTHER STRUCTURE POINTER TYPES. MAKE EVERYTHING OPAQUE AND EXPOSE FUNCTIONS. MAKE ITERATOR BEGIN REVERSED AND PREV
