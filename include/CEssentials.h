@@ -19,6 +19,8 @@
 #define guard(condition, ret) if ((condition)) return (ret)
 #define castderef(type, expr) (*((type*)(expr)))
 
+char* CE__converrno(int err);
+
 typedef unsigned char byte;
 
 typedef struct CE__Iterator *CE__Iterator;
