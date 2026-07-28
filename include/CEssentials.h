@@ -55,6 +55,8 @@ int CE__fprintstr(FILE* stream, CE__String self);
 int CE__strdrain(CE__String self, size_t start, size_t end);
 CE__Iterator CE__strbegin(CE__String str);
 CE__Iterator CE__strrbegin(CE__String str);
+char CE__strbyteat(CE__String str, size_t index);
+char* CE__strat(CE__String str, size_t index);
 
 typedef struct CE__ArrayList *CE__ArrayList;
 
@@ -71,8 +73,9 @@ bool CE__ArrayListContains(CE__ArrayList self, void* item);
 int CE__removeArrayList(CE__ArrayList self, size_t index);
 CE__Iterator CE__ArrayListBegin(CE__ArrayList self);
 CE__Iterator CE__ArrayListRBegin(CE__ArrayList self);
+void* CE__ArrayListAt(CE__ArrayList self, size_t index);
 
-typedef struct CE__LinkedList *CE__LinkedList;
+typedef struct CE__LinkedList *CE__LinkedList, *CE__Stack;
 
 size_t CE__LinkedListLen(CE__LinkedList ll);
 CE__LinkedList CE__newLinkedList(size_t element_size);
@@ -84,3 +87,13 @@ bool CE__LinkedListContains(CE__LinkedList ll, void* item);
 int CE__removeLinkedList(CE__LinkedList ll, size_t index);
 CE__Iterator CE__LinkedListBegin(CE__LinkedList ll);
 CE__Iterator CE__LinkedListRBegin(CE__LinkedList ll);
+void* CE__LinkedListGet(CE__LinkedList ll, size_t index);
+
+size_t CE__StackLen(CE__Stack stack);
+CE__Stack CE__newStack(size_t element_size);
+void CE__freeStack(CE__Stack stack);
+int CE__pushStack(CE__Stack stack, void* element);
+void* CE__popStack(CE__Stack stack);
+void* CE__peekStack(CE__Stack stack);
+CE__Iterator CE__StackBegin(CE__Stack stack);
+CE__Iterator CE__StackRBegin(CE__Stack stack);

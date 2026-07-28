@@ -162,3 +162,11 @@ CE__Iterator CE__ArrayListRBegin(CE__ArrayList self) {
   };
   return ret;
 }
+
+void* CE__ArrayListAt(CE__ArrayList self, size_t index) {
+  guard(self == nullptr, nullptr);
+  guard(self->buffer == nullptr, nullptr);
+  guard(index >= self->length, nullptr);
+
+  return self->buffer + index * self->element_size;
+}

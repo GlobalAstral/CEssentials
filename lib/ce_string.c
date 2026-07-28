@@ -283,3 +283,19 @@ CE__Iterator CE__strrbegin(CE__String str) {
   };
   return ret;
 }
+
+char CE__strbyteat(CE__String str, size_t index) {
+  guard(str == nullptr, 0);
+  guard(index >= str->bytelen, 0);
+  return str->buffer[index];
+}
+
+char* CE__strat(CE__String str, size_t index) {
+  guard(str == nullptr, nullptr);
+  guard(index >= str->length, nullptr);
+  size_t b = CE__utf8_byte_index(str, index);
+  size_t s = CE__utf8_char_size(str->buffer[b]);
+  char* ret = (char*)malloc(s);
+  memcpy(ret, str->buffer + b, s);
+  return ret;
+}

@@ -176,7 +176,7 @@ bool CE__LinkedListNext(CE__Iterator it) {
   return true;
 }
 
-void* CE__LinkedListGet(CE__Iterator it) {
+void* CE__LinkedListIGet(CE__Iterator it) {
   if (it->pointer == nullptr)
     return nullptr;
   CE__LLNode* node = (CE__LLNode*)it->pointer;
@@ -190,7 +190,7 @@ CE__Iterator CE__LinkedListBegin(CE__LinkedList ll) {
     .index = 0,
     .step = 0,
     .pointer = (byte*)ll->head,
-    .get = CE__LinkedListGet,
+    .get = CE__LinkedListIGet,
     .next = CE__LinkedListNext,
   };
   return ret;
@@ -211,8 +211,18 @@ CE__Iterator CE__LinkedListRBegin(CE__LinkedList ll) {
     .index = ll->length-1,
     .step = 0,
     .pointer = (byte*)ll->tail,
-    .get = CE__LinkedListGet,
+    .get = CE__LinkedListIGet,
     .next = CE__LinkedListPrev,
   };
   return ret;
+}
+
+void* CE__LinkedListGet(CE__LinkedList ll, size_t index) {
+  guard(ll == nullptr, nullptr);
+  guard(index >= ll->length, nullptr);
+
+  CE__LLNode* node = getNode(ll, index);
+  guard(node == nullptr, nullptr);
+
+  return node->item;
 }

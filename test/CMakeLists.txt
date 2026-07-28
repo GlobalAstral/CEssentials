@@ -24,6 +24,11 @@ add_executable(LinkedListsTest
 )
 target_link_libraries(LinkedListsTest PRIVATE CEssentials)
 
+add_executable(StackTest
+  "StackTest.c"
+)
+target_link_libraries(StackTest PRIVATE CEssentials)
+
 
 enable_testing()
 
@@ -50,4 +55,9 @@ add_test(
 add_test(
   NAME LinkedListsTest
   COMMAND "LinkedListsTest"
+)
+
+add_test(
+  NAME StackTest
+  COMMAND "StackTest"
 )
