@@ -211,6 +211,17 @@ int string3() {
   return 0;
 }
 
+int bitfield() {
+
+  CE__BitField field = CE__newBitField();
+
+  CE__setBitField(field, 0, true);
+
+  CE__freeBitField(field);
+
+  return 0;
+}
+
 int main(int argc, char* argv[]) {
 
   if (argc != 2) {
@@ -232,6 +243,8 @@ int main(int argc, char* argv[]) {
     return string2();
   if (strequ(test, "string3"))
     return string3();
+  if (strequ(test, "bitfield"))
+    return bitfield();
 
   return 0;
 }

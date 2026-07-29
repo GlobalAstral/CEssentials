@@ -35,3 +35,8 @@ add_test(
   NAME StackTest
   COMMAND Main stack
 )
+
+add_test(
+  NAME BitFieldTest
+  COMMAND Main bitfield
+)

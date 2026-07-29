@@ -100,7 +100,16 @@ void* CE__peekStack(CE__Stack stack);
 CE__Iterator CE__StackBegin(CE__Stack stack);
 CE__Iterator CE__StackRBegin(CE__Stack stack);
 
-//TODO BitSet
+typedef struct CE__BitField *CE__BitField;
+
+CE__BitField CE__newBitFieldEx(unsigned long long init);
+CE__BitField CE__newBitField();
+void CE__freeBitField(CE__BitField self);
+bool CE__getBitField(CE__BitField self, unsigned char bit);
+void CE__setBitField(CE__BitField self, unsigned char bit, bool flag);
+void CE__clearBitField(CE__BitField self);
+void CE__toggleBitField(CE__BitField self, unsigned char bit);
+
 //TODO BitArray
 //TODO Logger
 //TODO HashMap
