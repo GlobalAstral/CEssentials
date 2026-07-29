@@ -60,7 +60,7 @@ CE__Iterator CE__strrbegin(CE__String str);
 char CE__strbyteat(CE__String str, size_t index);
 char* CE__strat(CE__String str, size_t index);
 
-typedef struct CE__ArrayList *CE__ArrayList;
+typedef struct CE__ArrayList *CE__ArrayList, *CE__Stack;
 
 size_t CE__ArrayListLen(CE__ArrayList self);
 size_t CE__ArrayListEleSz(CE__ArrayList self);
@@ -76,8 +76,9 @@ int CE__removeArrayList(CE__ArrayList self, size_t index);
 CE__Iterator CE__ArrayListBegin(CE__ArrayList self);
 CE__Iterator CE__ArrayListRBegin(CE__ArrayList self);
 void* CE__ArrayListAt(CE__ArrayList self, size_t index);
+void* CE__popArrayList(CE__ArrayList self);
 
-typedef struct CE__LinkedList *CE__LinkedList, *CE__Stack;
+typedef struct CE__LinkedList *CE__LinkedList;
 
 size_t CE__LinkedListLen(CE__LinkedList ll);
 CE__LinkedList CE__newLinkedList(size_t element_size);
@@ -92,6 +93,7 @@ CE__Iterator CE__LinkedListRBegin(CE__LinkedList ll);
 void* CE__LinkedListGet(CE__LinkedList ll, size_t index);
 
 size_t CE__StackLen(CE__Stack stack);
+size_t CE__StackEleSz(CE__Stack stack);
 CE__Stack CE__newStack(size_t element_size);
 void CE__freeStack(CE__Stack stack);
 int CE__pushStack(CE__Stack stack, void* element);

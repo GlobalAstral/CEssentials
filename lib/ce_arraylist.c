@@ -108,7 +108,7 @@ int CE__removeArrayList(CE__ArrayList self, size_t index) {
   guard(index >= self->length, INDEX_OUT_OF_BOUNDS);
 
   if (index == self->length - 1) {
-    self->length--;
+    CE__popArrayList(self);
     return OK;
   }
 
@@ -169,4 +169,11 @@ void* CE__ArrayListAt(CE__ArrayList self, size_t index) {
   guard(index >= self->length, nullptr);
 
   return self->buffer + index * self->element_size;
+}
+
+void* CE__popArrayList(CE__ArrayList self) {
+  void* ret = CE__ArrayListAt(self, self->length - 1);
+  guard(ret == nullptr, nullptr);
+  self->length--;
+  return ret;
 }
