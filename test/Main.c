@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <stdio.h>
 #include <CEssentials.h>
 
 #define strequ(a, b) (strcmp(a, b) == 0)
@@ -212,12 +214,51 @@ int string3() {
 }
 
 int bitfield() {
+  CE__BitField bf = CE__newBitField();
 
-  CE__BitField field = CE__newBitField();
+  for (unsigned char i = 0; i < 64; i++)
+    assert(CE__getBitField(bf, i) == false);
 
-  CE__setBitField(field, 0, true);
+  CE__setBitField(bf, 0, true);
+  CE__setBitField(bf, 5, true);
+  CE__setBitField(bf, 63, true);
 
-  CE__freeBitField(field);
+  assert(CE__getBitField(bf, 0));
+  assert(CE__getBitField(bf, 5));
+  assert(CE__getBitField(bf, 63));
+
+  assert(!CE__getBitField(bf, 1));
+  assert(!CE__getBitField(bf, 62));
+
+  CE__setBitField(bf, 5, false);
+
+  assert(CE__getBitField(bf, 0));
+  assert(!CE__getBitField(bf, 5));
+  assert(CE__getBitField(bf, 63));
+
+  CE__toggleBitField(bf, 0);
+  assert(!CE__getBitField(bf, 0));
+
+  CE__toggleBitField(bf, 0);
+  assert(CE__getBitField(bf, 0));
+
+  CE__clearBitField(bf);
+
+  for (unsigned char i = 0; i < 64; i++)
+    assert(!CE__getBitField(bf, i));
+
+  CE__freeBitField(bf);
+
+  bf = CE__newBitFieldEx(0xAAAAAAAAAAAAAAAAULL);
+
+  for (unsigned char i = 0; i < 64; i++) {
+    bool expected = (i % 2) == 1;
+    assert(CE__getBitField(bf, i) == expected);
+  }
+
+  CE__freeBitField(bf);
+
+  printf("BitField tests passed!\n");
 
   return 0;
 }
