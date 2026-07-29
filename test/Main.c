@@ -314,6 +314,50 @@ int bitarray() {
   return 0;
 }
 
+int logger() {
+  CE__Logger console1 = CE__newLogger(stdout);
+  assert(console1 != NULL);
+
+  CE__Logger console2 = CE__newLogger(stdout);
+  assert(console2 != NULL);
+
+  assert(CE__LoggerTrace(console1, "Trace message: %d", 1) >= 0);
+  assert(CE__LoggerDebug(console1, "Debug message: %s", "hello") >= 0);
+  assert(CE__LoggerInfo(console1, "Info message") >= 0);
+  assert(CE__LoggerWarn(console1, "Warning message") >= 0);
+  assert(CE__LoggerError(console1, "Error message") >= 0);
+  assert(CE__LoggerFatal(console1, "Fatal message") >= 0);
+
+  assert(CE__LoggerInfo(console2, "Second logger works") >= 0);
+
+  FILE* file = fopen("logger_test.txt", "w+");
+  assert(file != NULL);
+
+  CE__Logger fileLogger = CE__newLogger(file);
+  assert(fileLogger != NULL);
+
+  assert(CE__LoggerInfo(fileLogger, "File test: %d", 42) >= 0);
+  assert(CE__LoggerError(fileLogger, "Something failed") >= 0);
+
+  fflush(file);
+  fseek(file, 0, SEEK_SET);
+
+  char buffer[256] = {0};
+  fread(buffer, 1, sizeof(buffer) - 1, file);
+
+  assert(strstr(buffer, "File test") != NULL);
+  assert(strstr(buffer, "Something failed") != NULL);
+
+  CE__freeLogger(console1);
+  CE__freeLogger(console2);
+  CE__freeLogger(fileLogger);
+
+  fclose(file);
+
+  printf("Logger tests passed!\n");
+  return 0;
+}
+
 int main(int argc, char* argv[]) {
 
   if (argc != 2) {
@@ -339,6 +383,8 @@ int main(int argc, char* argv[]) {
     return bitfield();
   if (strequ(test, "bitarray"))
     return bitarray();
+  if (strequ(test, "logger"))
+    return logger();
 
   return 0;
 }

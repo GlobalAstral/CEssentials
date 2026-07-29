@@ -14,6 +14,58 @@
 #define INDEX_OUT_OF_BOUNDS -6
 #define TYPE_EMPTY -7
 
+#define CE_ANSI_RESET "\033[0m"
+
+// Styles
+#define CE_ANSI_BOLD          "\033[1m"
+#define CE_ANSI_DIM           "\033[2m"
+#define CE_ANSI_ITALIC        "\033[3m"
+#define CE_ANSI_UNDERLINE     "\033[4m"
+#define CE_ANSI_BLINK         "\033[5m"
+#define CE_ANSI_REVERSE       "\033[7m"
+#define CE_ANSI_HIDDEN        "\033[8m"
+#define CE_ANSI_STRIKETHROUGH "\033[9m"
+
+// Normal foreground colors
+#define CE_ANSI_BLACK   "\033[30m"
+#define CE_ANSI_RED     "\033[31m"
+#define CE_ANSI_GREEN   "\033[32m"
+#define CE_ANSI_YELLOW  "\033[33m"
+#define CE_ANSI_BLUE    "\033[34m"
+#define CE_ANSI_MAGENTA "\033[35m"
+#define CE_ANSI_CYAN    "\033[36m"
+#define CE_ANSI_WHITE   "\033[37m"
+
+// Bright foreground colors
+#define CE_ANSI_BRIGHT_BLACK   "\033[90m"
+#define CE_ANSI_BRIGHT_RED     "\033[91m"
+#define CE_ANSI_BRIGHT_GREEN   "\033[92m"
+#define CE_ANSI_BRIGHT_YELLOW  "\033[93m"
+#define CE_ANSI_BRIGHT_BLUE    "\033[94m"
+#define CE_ANSI_BRIGHT_MAGENTA "\033[95m"
+#define CE_ANSI_BRIGHT_CYAN    "\033[96m"
+#define CE_ANSI_BRIGHT_WHITE   "\033[97m"
+
+// Normal background colors
+#define CE_ANSI_BG_BLACK   "\033[40m"
+#define CE_ANSI_BG_RED     "\033[41m"
+#define CE_ANSI_BG_GREEN   "\033[42m"
+#define CE_ANSI_BG_YELLOW  "\033[43m"
+#define CE_ANSI_BG_BLUE    "\033[44m"
+#define CE_ANSI_BG_MAGENTA "\033[45m"
+#define CE_ANSI_BG_CYAN    "\033[46m"
+#define CE_ANSI_BG_WHITE   "\033[47m"
+
+// Bright background colors
+#define CE_ANSI_BG_BRIGHT_BLACK   "\033[100m"
+#define CE_ANSI_BG_BRIGHT_RED     "\033[101m"
+#define CE_ANSI_BG_BRIGHT_GREEN   "\033[102m"
+#define CE_ANSI_BG_BRIGHT_YELLOW  "\033[103m"
+#define CE_ANSI_BG_BRIGHT_BLUE    "\033[104m"
+#define CE_ANSI_BG_BRIGHT_MAGENTA "\033[105m"
+#define CE_ANSI_BG_BRIGHT_CYAN    "\033[106m"
+#define CE_ANSI_BG_BRIGHT_WHITE   "\033[107m"
+
 #define nullptr NULL
 #define loop while(true)
 #define guard(condition, ret) if ((condition)) return (ret)
@@ -121,6 +173,17 @@ void CE__setBitArray(CE__BitArray self, size_t bit, bool flag);
 void CE__clearBitArray(CE__BitArray self);
 void CE__toggleBitArray(CE__BitArray self, size_t bit);
 
-//TODO Logger
+typedef struct CE__Logger *CE__Logger;
+
+CE__Logger CE__newLogger(FILE* stream);
+CE__Logger CE__newLoggerPath(char* path);
+void CE__freeLogger(CE__Logger self);
+int CE__LoggerTrace(CE__Logger self, char* fmt, ...);
+int CE__LoggerDebug(CE__Logger self, char* fmt, ...);
+int CE__LoggerInfo(CE__Logger self, char* fmt, ...);
+int CE__LoggerWarn(CE__Logger self, char* fmt, ...);
+int CE__LoggerError(CE__Logger self, char* fmt, ...);
+int CE__LoggerFatal(CE__Logger self, char* fmt, ...);
+
 //TODO HashMap
 //TODO HashSet

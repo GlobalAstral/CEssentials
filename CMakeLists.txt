@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} STATIC
   "lib/ce_stack.c"
   "lib/ce_bitfield.c"
   "lib/ce_bitarray.c"
+  "lib/ce_logger.c"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")

@@ -45,3 +45,8 @@ add_test(
   NAME BitArrayTest
   COMMAND Main bitarray
 )
+
+add_test(
+  NAME LoggerTest
+  COMMAND Main logger
+)
