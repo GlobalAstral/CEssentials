@@ -112,7 +112,15 @@ void CE__setBitField(CE__BitField self, unsigned char bit, bool flag);
 void CE__clearBitField(CE__BitField self);
 void CE__toggleBitField(CE__BitField self, unsigned char bit);
 
-//TODO BitArray
+typedef struct CE__BitArray *CE__BitArray;
+
+CE__BitArray CE__newBitArray(size_t size);
+void CE__freeBitArray(CE__BitArray self);
+bool CE__getBitArray(CE__BitArray self, size_t bit);
+void CE__setBitArray(CE__BitArray self, size_t bit, bool flag);
+void CE__clearBitArray(CE__BitArray self);
+void CE__toggleBitArray(CE__BitArray self, size_t bit);
+
 //TODO Logger
 //TODO HashMap
 //TODO HashSet

@@ -40,3 +40,8 @@ add_test(
   NAME BitFieldTest
   COMMAND Main bitfield
 )
+
+add_test(
+  NAME BitArrayTest
+  COMMAND Main bitarray
+)

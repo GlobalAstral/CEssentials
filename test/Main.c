@@ -263,6 +263,57 @@ int bitfield() {
   return 0;
 }
 
+int bitarray() {
+  CE__BitArray array = CE__newBitArray(8);
+
+  for (size_t i = 0; i < 64; i++)
+    assert(CE__getBitArray(array, i) == false);
+
+  CE__setBitArray(array, 0, true);
+  CE__setBitArray(array, 7, true);
+  CE__setBitArray(array, 8, true);
+  CE__setBitArray(array, 31, true);
+  CE__setBitArray(array, 63, true);
+
+  assert(CE__getBitArray(array, 0));
+  assert(CE__getBitArray(array, 7));
+  assert(CE__getBitArray(array, 8));
+  assert(CE__getBitArray(array, 31));
+  assert(CE__getBitArray(array, 63));
+
+  assert(!CE__getBitArray(array, 1));
+  assert(!CE__getBitArray(array, 9));
+  assert(!CE__getBitArray(array, 62));
+
+  CE__setBitArray(array, 31, false);
+
+  assert(!CE__getBitArray(array, 31));
+  assert(CE__getBitArray(array, 0));
+  assert(CE__getBitArray(array, 63));
+
+  CE__toggleBitArray(array, 0);
+  assert(!CE__getBitArray(array, 0));
+
+  CE__toggleBitArray(array, 0);
+  assert(CE__getBitArray(array, 0));
+
+  CE__toggleBitArray(array, 50);
+  assert(CE__getBitArray(array, 50));
+
+  CE__toggleBitArray(array, 50);
+  assert(!CE__getBitArray(array, 50));
+
+  CE__clearBitArray(array);
+
+  for (size_t i = 0; i < 64; i++)
+    assert(!CE__getBitArray(array, i));
+
+  CE__freeBitArray(array);
+
+  printf("BitArray tests passed!\n");
+  return 0;
+}
+
 int main(int argc, char* argv[]) {
 
   if (argc != 2) {
@@ -286,6 +337,8 @@ int main(int argc, char* argv[]) {
     return string3();
   if (strequ(test, "bitfield"))
     return bitfield();
+  if (strequ(test, "bitarray"))
+    return bitarray();
 
   return 0;
 }
