@@ -185,5 +185,11 @@ int CE__LoggerWarn(CE__Logger self, char* fmt, ...);
 int CE__LoggerError(CE__Logger self, char* fmt, ...);
 int CE__LoggerFatal(CE__Logger self, char* fmt, ...);
 
+typedef struct CE__Hash128 *CE__Hash128;
+
+CE__Hash128 CE__hash128(void* data, size_t size);
+void CE__freeHash128(CE__Hash128 self);
+bool CE__Hash128Equals(CE__Hash128 a, CE__Hash128 b);
+
 //TODO HashMap
 //TODO HashSet
