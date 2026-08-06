@@ -358,6 +358,131 @@ int logger() {
   return 0;
 }
 
+bool equals_ints(void* a, void* b, size_t _) {
+  int* ia = a;
+  int* ib = b;
+  return ia == ib || *ia == *ib;
+}
+
+int hashmap() {
+  printf("Creating HashMap...\n");
+
+  CE__HashMap map = CE__newHashMapEx(sizeof(int), sizeof(int), equals_ints);
+  assert(map != NULL);
+
+
+  printf("Testing insert...\n");
+
+  for (int i = 0; i < 100; i++) {
+    int key = i;
+    int value = i * 10;
+
+    assert(CE__insertHashMap(map, &key, &value) == OK);
+  }
+
+  assert(CE__lengthHashMap(map) == 100);
+
+
+  printf("Testing get...\n");
+
+  for (int i = 0; i < 100; i++) {
+    int key = i;
+
+    int* value = CE__getHashMap(map, &key);
+
+    assert(value != NULL);
+    assert(*value == i * 10);
+  }
+
+
+  printf("Testing contains...\n");
+
+  int exists = 50;
+  int missing = 999;
+
+  assert(CE__containsHashMap(map, &exists));
+  assert(!CE__containsHashMap(map, &missing));
+
+
+  printf("Testing overwrite...\n");
+
+  int key = 10;
+  int newValue = 12345;
+
+  assert(CE__insertHashMap(map, &key, &newValue) == OK);
+
+  int* result = CE__getHashMap(map, &key);
+
+  assert(result != NULL);
+  assert(*result == 12345);
+
+  // length should not increase
+  assert(CE__lengthHashMap(map) == 100);
+
+
+  printf("Testing getOrCreate...\n");
+
+  int newKey = 500;
+  int defaultValue = 777;
+
+  int* created = CE__getOrCreateHashMap(
+    map,
+    &newKey,
+    &defaultValue
+  );
+
+  assert(created != NULL);
+  assert(*created == 777);
+  assert(CE__lengthHashMap(map) == 101);
+
+
+  // Calling again should return existing value
+  int anotherValue = 999;
+
+  int* existing = CE__getOrCreateHashMap(
+    map,
+    &newKey,
+    &anotherValue
+  );
+
+  assert(existing == created);
+  assert(*existing == 777);
+  assert(CE__lengthHashMap(map) == 101);
+
+  printf("Testing reserve...\n");
+
+  assert(CE__reserveHashMap(map, 1000) == OK);
+
+  printf("Testing remove...\n");
+
+  for (int i = 0; i < 50; i++) {
+    int key = i;
+    assert(CE__removeHashMap(map, &key) == OK);
+  }
+
+  assert(CE__lengthHashMap(map) == 51);
+
+
+  for (int i = 0; i < 50; i++) {
+    int key = i;
+    assert(!CE__containsHashMap(map, &key));
+  }
+
+
+  printf("Testing missing remove...\n");
+
+  missing = 789173;
+  assert(CE__removeHashMap(map, &missing) == NOT_FOUND);
+
+  printf("Freeing HashMap...\n");
+
+  CE__freeHashMap(map);
+
+  printf("All HashMap tests passed!\n");
+
+  return 0;
+}
+
 int main(int argc, char* argv[]) {
 
   if (argc != 2) {
@@ -385,6 +510,8 @@ int main(int argc, char* argv[]) {
     return bitarray();
   if (strequ(test, "logger"))
     return logger();
+  if (strequ(test, "hashmap"))
+    return hashmap();
 
   return 0;
 }

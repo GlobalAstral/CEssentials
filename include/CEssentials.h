@@ -13,6 +13,7 @@
 #define CANNOT_ALLOCATE -5
 #define INDEX_OUT_OF_BOUNDS -6
 #define TYPE_EMPTY -7
+#define NOT_FOUND -8
 
 #define CE_ANSI_RESET "\033[0m"
 
@@ -71,7 +72,8 @@
 #define guard(condition, ret) if ((condition)) return (ret)
 #define castderef(type, expr) (*((type*)(expr)))
 
-char* CE__converrno(int err);
+const char* const CE__converrno(int err);
+void* CE__memdup(void* mem, size_t size);
 
 typedef unsigned char byte;
 
@@ -190,6 +192,21 @@ typedef struct CE__Hash128 *CE__Hash128;
 CE__Hash128 CE__hash128(void* data, size_t size);
 void CE__freeHash128(CE__Hash128 self);
 bool CE__Hash128Equals(CE__Hash128 a, CE__Hash128 b);
+unsigned long long CE__Hash128Modulo(CE__Hash128 self, unsigned long long mod);
 
-//TODO HashMap
+typedef bool (*CE__HashMapEquals)(void*, void*, size_t);
+
+typedef struct CE__HashMap *CE__HashMap;
+
+size_t CE__lengthHashMap(CE__HashMap self);
+CE__HashMap CE__newHashMapEx(size_t key_size, size_t value_size, CE__HashMapEquals equals);
+CE__HashMap CE__newHashMap(size_t key_size, size_t value_size);
+void CE__freeHashMap(CE__HashMap self);
+int CE__insertHashMap(CE__HashMap self, void* key, void* value);
+void* CE__getHashMap(CE__HashMap self, void* key);
+bool CE__containsHashMap(CE__HashMap self, void* key);
+int CE__removeHashMap(CE__HashMap self, void* key);
+int CE__reserveHashMap(CE__HashMap self, size_t amount);
+void* CE__getOrCreateHashMap(CE__HashMap self, void* key, void* value);
+
 //TODO HashSet

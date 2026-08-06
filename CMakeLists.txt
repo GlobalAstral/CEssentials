@@ -11,7 +11,9 @@ add_library(${PROJECT_NAME} STATIC
   "lib/ce_bitfield.c"
   "lib/ce_bitarray.c"
   "lib/ce_logger.c"
+  "lib/cessentials.c"
   "lib/xxhash.c"
+  "lib/ce_hash.c"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")

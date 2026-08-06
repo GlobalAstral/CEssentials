@@ -136,6 +136,7 @@ CE__Iterator CE__ArrayListBegin(CE__ArrayList self) {
     .length = self->length,
     .pointer = self->buffer,
     .step = self->element_size,
+    .capacity = self->capacity,
     .next = CE__ArrayListNext,
     .get = CE__ArrayListGet
   };
@@ -157,6 +158,7 @@ CE__Iterator CE__ArrayListRBegin(CE__ArrayList self) {
     .length = self->length,
     .pointer = self->buffer + (self->length - 1) * self->element_size,
     .step = self->element_size,
+    .capacity = self->capacity,
     .next = CE__ArrayListPrev,
     .get = CE__ArrayListGet
   };

@@ -41,7 +41,7 @@ int CE__log(CE__Logger self, char* prefix, char* color, char* fmt, va_list list)
 int CE__LoggerTrace(CE__Logger self, char* fmt, ...) {
   va_list list;
   va_start(list, fmt);
-  int r = CE__log(self->stream, "TRACE", CE_ANSI_WHITE, fmt, list);
+  int r = CE__log(self, "TRACE", CE_ANSI_WHITE, fmt, list);
   va_end(list);
   return r;
 }
@@ -49,7 +49,7 @@ int CE__LoggerTrace(CE__Logger self, char* fmt, ...) {
 int CE__LoggerDebug(CE__Logger self, char* fmt, ...) {
   va_list list;
   va_start(list, fmt);
-  int r = CE__log(self->stream, "DEBUG", CE_ANSI_CYAN, fmt, list);
+  int r = CE__log(self, "DEBUG", CE_ANSI_CYAN, fmt, list);
   va_end(list);
   return r;
 }
@@ -57,7 +57,7 @@ int CE__LoggerDebug(CE__Logger self, char* fmt, ...) {
 int CE__LoggerInfo(CE__Logger self, char* fmt, ...) {
   va_list list;
   va_start(list, fmt);
-  int r = CE__log(self->stream, "INFO", CE_ANSI_GREEN, fmt, list);
+  int r = CE__log(self, "INFO", CE_ANSI_GREEN, fmt, list);
   va_end(list);
   return r;
 }
@@ -65,7 +65,7 @@ int CE__LoggerInfo(CE__Logger self, char* fmt, ...) {
 int CE__LoggerWarn(CE__Logger self, char* fmt, ...) {
   va_list list;
   va_start(list, fmt);
-  int r = CE__log(self->stream, "WARN", CE_ANSI_YELLOW, fmt, list);
+  int r = CE__log(self, "WARN", CE_ANSI_YELLOW, fmt, list);
   va_end(list);
   return r;
 }
@@ -73,7 +73,7 @@ int CE__LoggerWarn(CE__Logger self, char* fmt, ...) {
 int CE__LoggerError(CE__Logger self, char* fmt, ...) {
   va_list list;
   va_start(list, fmt);
-  int r = CE__log(self->stream, "ERROR", CE_ANSI_RED, fmt, list);
+  int r = CE__log(self, "ERROR", CE_ANSI_RED, fmt, list);
   va_end(list);
   return r;
 }
@@ -81,7 +81,7 @@ int CE__LoggerError(CE__Logger self, char* fmt, ...) {
 int CE__LoggerFatal(CE__Logger self, char* fmt, ...) {
   va_list list;
   va_start(list, fmt);
-  int r = CE__log(self->stream, "FATAL", CE_ANSI_MAGENTA, fmt, list);
+  int r = CE__log(self, "FATAL", CE_ANSI_MAGENTA, fmt, list);
   va_end(list);
   return r;
 }

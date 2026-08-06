@@ -50,3 +50,8 @@ add_test(
   NAME LoggerTest
   COMMAND Main logger
 )
+
+add_test(
+  NAME HashMapTest
+  COMMAND Main hashmap
+)

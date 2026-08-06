@@ -10,6 +10,7 @@ struct CE__Iterator {
   size_t length;
   byte* pointer;
   size_t step;
+  size_t capacity;
   
   CE__Iterator__NextFunc next;
   CE__Iterator__GetFunc get;

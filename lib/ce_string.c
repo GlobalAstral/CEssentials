@@ -257,6 +257,7 @@ CE__Iterator CE__strbegin(CE__String str) {
     .length = str->length,
     .pointer = str->buffer,
     .step = 0,
+    .capacity = str->capacity,
     .next = CE__strnext,
     .get = CE__strget
   };
@@ -278,6 +279,7 @@ CE__Iterator CE__strrbegin(CE__String str) {
     .length = str->length,
     .pointer = str->buffer + CE__utf8_byte_index(str, str->length - 1),
     .step = 0,
+    .capacity = str->capacity,
     .next = CE__strprev,
     .get = CE__strget
   };
