@@ -22,5 +22,5 @@ void* CE__IteratorGet(CE__Iterator it) {
 }
 
 void CE__FreeIterator(CE__Iterator it) {
-  free(it);
+  CE__free(it);
 }

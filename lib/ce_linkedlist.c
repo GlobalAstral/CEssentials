@@ -19,7 +19,7 @@ size_t CE__LinkedListLen(CE__LinkedList ll) {
 }
 
 CE__LinkedList CE__newLinkedList(size_t element_size) {
-  CE__LinkedList ret = (CE__LinkedList)malloc(sizeof(*ret));
+  CE__LinkedList ret = (CE__LinkedList)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   *ret = (struct CE__LinkedList) {
     .head = nullptr,
@@ -37,12 +37,12 @@ void CE__freeLinkedList(CE__LinkedList ll) {
   CE__LLNode* current = ll->head;
 
   while (current != nullptr) {
-    free(current->item);
+    CE__free(current->item);
     CE__LLNode* next = current->next;
-    free(current);
+    CE__free(current);
     current = next;
   }
-  free(ll);
+  CE__free(ll);
 }
 
 CE__LLNode* getNode(CE__LinkedList ll, size_t index) {
@@ -79,10 +79,10 @@ int CE__insertLinkedList(CE__LinkedList ll, size_t index, void* element) {
   guard(index > ll->length, INDEX_OUT_OF_BOUNDS);
   guard(element == nullptr, OTHER_VALUE_IS_NULL);
 
-  CE__LLNode* node = (CE__LLNode*)malloc(sizeof(CE__LLNode));
+  CE__LLNode* node = (CE__LLNode*)CE__malloc(sizeof(CE__LLNode));
   guard(node == nullptr, CANNOT_ALLOCATE);
   
-  void* data = malloc(ll->element_size);
+  void* data = CE__malloc(ll->element_size);
   guard(data == nullptr, CANNOT_ALLOCATE);
 
   memcpy(data, element, ll->element_size);
@@ -147,8 +147,8 @@ int CE__removeLinkedList(CE__LinkedList ll, size_t index) {
   if (index == 0) {
     CE__LLNode* new_head = ll->head->next;
     new_head->previous = nullptr;
-    free(ll->head->item);
-    free(ll->head);
+    CE__free(ll->head->item);
+    CE__free(ll->head);
     ll->head = new_head;
     ll->length--;
     return OK;
@@ -157,8 +157,8 @@ int CE__removeLinkedList(CE__LinkedList ll, size_t index) {
   if (index == ll->length-1) {
     CE__LLNode* new_tail = ll->tail->previous;
     new_tail->next = nullptr;
-    free(ll->tail->item);
-    free(ll->tail);
+    CE__free(ll->tail->item);
+    CE__free(ll->tail);
     ll->tail = new_tail;
     ll->length--;
     return OK;
@@ -167,8 +167,8 @@ int CE__removeLinkedList(CE__LinkedList ll, size_t index) {
   CE__LLNode* node = getNode(ll, index);
   node->previous->next = node->next;
   node->next->previous = node->previous;
-  free(node->item);
-  free(node);
+  CE__free(node->item);
+  CE__free(node);
   ll->length--;
   return OK;
 }
@@ -189,7 +189,7 @@ void* CE__LinkedListIGet(CE__Iterator it) {
 }
 
 CE__Iterator CE__LinkedListBegin(CE__LinkedList ll) {
-  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  CE__Iterator ret = (CE__Iterator)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   *ret = (struct CE__Iterator) {
     .length = ll->length,
@@ -211,7 +211,7 @@ bool CE__LinkedListPrev(CE__Iterator it) {
 }
 
 CE__Iterator CE__LinkedListRBegin(CE__LinkedList ll) {
-  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  CE__Iterator ret = (CE__Iterator)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   *ret = (struct CE__Iterator) {
     .length = ll->length,

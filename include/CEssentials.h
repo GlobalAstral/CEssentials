@@ -75,6 +75,18 @@
 const char* const CE__converrno(int err);
 void* CE__memdup(void* mem, size_t size);
 
+typedef void* (*CE__Malloc)(size_t size);
+typedef void* (*CE__Realloc)(void* buf, size_t size);
+typedef void* (*CE__Calloc)(size_t size, size_t ele_size);
+typedef void (*CE__Free)(void*);
+
+void CE__selectAllocators(CE__Malloc m, CE__Realloc r, CE__Calloc c, CE__Free f);
+
+void* CE__malloc(size_t size);
+void* CE__realloc(void* buf, size_t size);
+void* CE__calloc(size_t size, size_t ele_size);
+void CE__free(void* buf);
+
 typedef unsigned char byte;
 
 typedef struct CE__Iterator *CE__Iterator;

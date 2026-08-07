@@ -6,17 +6,17 @@ struct CE__BitArray {
 };
 
 CE__BitArray CE__newBitArray(size_t size) {
-  CE__BitArray ret = (CE__BitArray)malloc(sizeof(*ret));
+  CE__BitArray ret = (CE__BitArray)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   ret->length = size;
-  ret->bytes = (byte*)malloc(ret->length);
+  ret->bytes = (byte*)CE__malloc(ret->length);
   guard(ret->bytes == nullptr, nullptr);
   return ret;
 }
 
 void CE__freeBitArray(CE__BitArray self) {
-  free(self->bytes);
-  free(self);
+  CE__free(self->bytes);
+  CE__free(self);
 }
 
 bool CE__getBitArray(CE__BitArray self, size_t bit) {

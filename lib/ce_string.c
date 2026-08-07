@@ -33,7 +33,7 @@ CE__String CE__newString(char* init) {
 }
 
 CE__String CE__newStringLen(char* init, size_t size) {
-  CE__String ret = (CE__String)malloc(sizeof(*ret));
+  CE__String ret = (CE__String)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   if (!init) {
     ret->bytelen = 0;
@@ -52,13 +52,13 @@ CE__String CE__newStringLen(char* init, size_t size) {
 }
 
 void CE__freeString(CE__String s) {
-  free(s->buffer);
-  free(s);
+  CE__free(s->buffer);
+  CE__free(s);
 }
 
 int CE__strRealloc(CE__String s, size_t size) {
   size_t needed_size = getcap(size);
-  byte* new_buf = (byte*)realloc(s->buffer, needed_size);
+  byte* new_buf = (byte*)CE__realloc(s->buffer, needed_size);
 
   guard(!new_buf, CANNOT_ALLOCATE);
   
@@ -152,7 +152,7 @@ char* CE__strcstr(CE__String self) {
   guard(self == nullptr, nullptr);
   guard(self->buffer == nullptr, nullptr);
 
-  char* temp = (char*)malloc(self->bytelen+1);
+  char* temp = (char*)CE__malloc(self->bytelen+1);
   guard(!temp, nullptr);
 
   memcpy(temp, self->buffer, self->bytelen);
@@ -165,7 +165,7 @@ CE__String CE__substr(CE__String self, size_t start, size_t end) {
 
   size_t bstart = CE__utf8_byte_index(self, start);
   size_t bend = CE__utf8_byte_index(self, end);
-  CE__String r = (CE__String)malloc(sizeof(struct CE__String));
+  CE__String r = (CE__String)CE__malloc(sizeof(struct CE__String));
   guard(!r, nullptr);
 
   *r = (struct CE__String) {
@@ -190,21 +190,21 @@ CE__String CE__strfind(CE__String self, CE__String find) {
 bool CE__strcontains(CE__String self, CE__String find) {
   CE__String r = CE__strfind(self, find);
   bool flag = r != nullptr;
-  free(r);
+  CE__free(r);
   return flag;
 }
 
 int CE__printstr(CE__String self) {
   char* temp = CE__strcstr(self);
   int r = printf("%s", temp);
-  free(temp);
+  CE__free(temp);
   return r;
 }
 
 int CE__fprintstr(FILE* stream, CE__String self) {
   char* temp = CE__strcstr(self);
   int r = fprintf(stream, "%s", temp);
-  free(temp);
+  CE__free(temp);
   return r;
 }
 
@@ -256,7 +256,7 @@ void* CE__strget(CE__Iterator it) {
 }
 
 CE__Iterator CE__strbegin(CE__String str) {
-  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  CE__Iterator ret = (CE__Iterator)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
 
   *ret = (struct CE__Iterator) {
@@ -280,7 +280,7 @@ bool CE__strprev(CE__Iterator it) {
 }
 
 CE__Iterator CE__strrbegin(CE__String str) {
-  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  CE__Iterator ret = (CE__Iterator)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
 
   *ret = (struct CE__Iterator) {
@@ -306,7 +306,7 @@ char* CE__strat(CE__String str, size_t index) {
   guard(index >= str->length, nullptr);
   size_t b = CE__utf8_byte_index(str, index);
   size_t s = CE__utf8_char_size(str->buffer[b]);
-  char* ret = (char*)malloc(s);
+  char* ret = (char*)CE__malloc(s);
   guard(!ret, nullptr);
 
   memcpy(ret, str->buffer + b, s);

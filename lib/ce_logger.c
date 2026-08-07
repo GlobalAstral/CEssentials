@@ -8,7 +8,7 @@ struct CE__Logger {
 };
 
 CE__Logger CE__newLogger(FILE* stream) {
-  CE__Logger ret = (CE__Logger)malloc(sizeof(*ret));
+  CE__Logger ret = (CE__Logger)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   ret->stream = stream;
   ret->autoflush = true;
@@ -26,7 +26,7 @@ CE__Logger CE__newLoggerPath(char* path) {
 void CE__freeLogger(CE__Logger self) {
   if (self->owned)
     fclose(self->stream);
-  free(self);
+  CE__free(self);
 }
 
 int CE__log(CE__Logger self, char* prefix, char* color, char* fmt, va_list list) {

@@ -21,7 +21,7 @@ size_t CE__ArrayListEleSz(CE__ArrayList self) {
 }
 
 CE__ArrayList CE__newArrayList(size_t element_size) {
-  CE__ArrayList ret = (CE__ArrayList)malloc(sizeof(*ret));
+  CE__ArrayList ret = (CE__ArrayList)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   ret->element_size = element_size;
   ret->length = 0;
@@ -31,14 +31,14 @@ CE__ArrayList CE__newArrayList(size_t element_size) {
 }
 
 void CE__freeArrayList(CE__ArrayList list) {
-  free(list->buffer);
-  free(list);
+  CE__free(list->buffer);
+  CE__free(list);
 }
 
 int CE__ArrayListRealloc(CE__ArrayList list, size_t size) {
   guard(list == nullptr, VALUE_IS_NULL);
   size_t needed_size = getcap(size);
-  byte* new_buf = (byte*)realloc(list->buffer, needed_size);
+  byte* new_buf = (byte*)CE__realloc(list->buffer, needed_size);
 
   guard(!new_buf, CANNOT_ALLOCATE);
 
@@ -80,7 +80,7 @@ int CE__appendArrayList(CE__ArrayList self, void* item) {
 CE__ArrayList CE__ArrayListSection(CE__ArrayList self, size_t start, size_t end) {
   guard(self == nullptr || self->buffer == nullptr || start > self->length || end >= self->length, nullptr);
 
-  CE__ArrayList view = (CE__ArrayList)malloc(sizeof(*view));
+  CE__ArrayList view = (CE__ArrayList)CE__malloc(sizeof(*view));
   guard(!view, nullptr);
   *view = (struct CE__ArrayList) {
     .element_size = self->element_size,
@@ -133,7 +133,7 @@ void* CE__ArrayListGet(CE__Iterator it) {
 }
 
 CE__Iterator CE__ArrayListBegin(CE__ArrayList self) {
-  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  CE__Iterator ret = (CE__Iterator)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   *ret = (struct CE__Iterator) {
     .index = 0,
@@ -156,7 +156,7 @@ bool CE__ArrayListPrev(CE__Iterator it) {
 }
 
 CE__Iterator CE__ArrayListRBegin(CE__ArrayList self) {
-  CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  CE__Iterator ret = (CE__Iterator)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   *ret = (struct CE__Iterator) {
     .index = self->length-1,

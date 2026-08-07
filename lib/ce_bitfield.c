@@ -6,7 +6,7 @@ struct CE__BitField {
 };
 
 CE__BitField CE__newBitFieldEx(unsigned long long init) {
-  CE__BitField ret = (CE__BitField)malloc(sizeof(*ret));
+  CE__BitField ret = (CE__BitField)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   ret->flags = init;
   ret->initial = init;
@@ -18,7 +18,7 @@ CE__BitField CE__newBitField() {
 }
 
 void CE__freeBitField(CE__BitField self) {
-  free(self);
+  CE__free(self);
 }
 
 bool CE__getBitField(CE__BitField self, unsigned char bit) {  
