@@ -7,8 +7,10 @@ struct CE__BitArray {
 
 CE__BitArray CE__newBitArray(size_t size) {
   CE__BitArray ret = (CE__BitArray)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   ret->length = size;
   ret->bytes = (byte*)malloc(ret->length);
+  guard(ret->bytes == nullptr, nullptr);
   return ret;
 }
 

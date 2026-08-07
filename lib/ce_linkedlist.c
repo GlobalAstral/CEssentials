@@ -20,6 +20,7 @@ size_t CE__LinkedListLen(CE__LinkedList ll) {
 
 CE__LinkedList CE__newLinkedList(size_t element_size) {
   CE__LinkedList ret = (CE__LinkedList)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   *ret = (struct CE__LinkedList) {
     .head = nullptr,
     .tail = nullptr,
@@ -79,7 +80,11 @@ int CE__insertLinkedList(CE__LinkedList ll, size_t index, void* element) {
   guard(element == nullptr, OTHER_VALUE_IS_NULL);
 
   CE__LLNode* node = (CE__LLNode*)malloc(sizeof(CE__LLNode));
+  guard(node == nullptr, CANNOT_ALLOCATE);
+  
   void* data = malloc(ll->element_size);
+  guard(data == nullptr, CANNOT_ALLOCATE);
+
   memcpy(data, element, ll->element_size);
   
   *node = (CE__LLNode) {
@@ -185,6 +190,7 @@ void* CE__LinkedListIGet(CE__Iterator it) {
 
 CE__Iterator CE__LinkedListBegin(CE__LinkedList ll) {
   CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   *ret = (struct CE__Iterator) {
     .length = ll->length,
     .index = 0,
@@ -206,6 +212,7 @@ bool CE__LinkedListPrev(CE__Iterator it) {
 
 CE__Iterator CE__LinkedListRBegin(CE__LinkedList ll) {
   CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   *ret = (struct CE__Iterator) {
     .length = ll->length,
     .index = ll->length-1,

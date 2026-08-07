@@ -34,6 +34,7 @@ CE__String CE__newString(char* init) {
 
 CE__String CE__newStringLen(char* init, size_t size) {
   CE__String ret = (CE__String)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   if (!init) {
     ret->bytelen = 0;
     ret->buffer = nullptr;
@@ -152,6 +153,8 @@ char* CE__strcstr(CE__String self) {
   guard(self->buffer == nullptr, nullptr);
 
   char* temp = (char*)malloc(self->bytelen+1);
+  guard(!temp, nullptr);
+
   memcpy(temp, self->buffer, self->bytelen);
   temp[self->bytelen] = 0;
   return temp;
@@ -163,6 +166,8 @@ CE__String CE__substr(CE__String self, size_t start, size_t end) {
   size_t bstart = CE__utf8_byte_index(self, start);
   size_t bend = CE__utf8_byte_index(self, end);
   CE__String r = (CE__String)malloc(sizeof(struct CE__String));
+  guard(!r, nullptr);
+
   *r = (struct CE__String) {
     .length = end - start,
     .bytelen = bend - bstart,
@@ -252,6 +257,8 @@ void* CE__strget(CE__Iterator it) {
 
 CE__Iterator CE__strbegin(CE__String str) {
   CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
+
   *ret = (struct CE__Iterator) {
     .index = 0,
     .length = str->length,
@@ -274,6 +281,8 @@ bool CE__strprev(CE__Iterator it) {
 
 CE__Iterator CE__strrbegin(CE__String str) {
   CE__Iterator ret = (CE__Iterator)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
+
   *ret = (struct CE__Iterator) {
     .index = str->length - 1,
     .length = str->length,
@@ -298,6 +307,8 @@ char* CE__strat(CE__String str, size_t index) {
   size_t b = CE__utf8_byte_index(str, index);
   size_t s = CE__utf8_char_size(str->buffer[b]);
   char* ret = (char*)malloc(s);
+  guard(!ret, nullptr);
+
   memcpy(ret, str->buffer + b, s);
   return ret;
 }

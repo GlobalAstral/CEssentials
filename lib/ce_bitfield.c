@@ -7,6 +7,7 @@ struct CE__BitField {
 
 CE__BitField CE__newBitFieldEx(unsigned long long init) {
   CE__BitField ret = (CE__BitField)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   ret->flags = init;
   ret->initial = init;
   return ret;

@@ -15,6 +15,7 @@ struct CE__Hash128 {
 CE__Hash128 CE__hash128(void* data, size_t size) {
   XXH128_hash_t h = XXH3_128bits(data, size);
   CE__Hash128 ret = (CE__Hash128)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   ret->high = h.high64;
   ret->low = h.low64;
   return ret;
@@ -58,13 +59,15 @@ size_t CE__lengthHashMap(CE__HashMap self) {
 
 CE__HashMap CE__newHashMapEx(size_t key_size, size_t value_size, CE__HashMapEquals equals) {
   CE__HashMap ret = (CE__HashMap)malloc(sizeof(*ret));
-
+  guard(!ret, nullptr);
+  
   ret->capacity = DEFAULT_CAPACITY;
   ret->equals = equals;
   ret->key_size = key_size;
   ret->length = 0;
   ret->value_size = value_size;
   ret->buckets = calloc(ret->capacity, sizeof(Bucket));
+  guard(ret->buckets == nullptr, nullptr);
 
   return ret;
 }
@@ -130,7 +133,7 @@ int resize(CE__HashMap self, size_t newsize) {
 
 Bucket newBucket(CE__Hash128 hash, void* key, void* value, Bucket next) {
   Bucket ret = (Bucket)malloc(sizeof(*ret));
-  guard(ret == nullptr, nullptr);
+  guard(!ret, nullptr);
 
   *ret = (struct Bucket) {
     .hash = hash,

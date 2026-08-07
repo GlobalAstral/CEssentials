@@ -9,6 +9,7 @@ struct CE__Logger {
 
 CE__Logger CE__newLogger(FILE* stream) {
   CE__Logger ret = (CE__Logger)malloc(sizeof(*ret));
+  guard(!ret, nullptr);
   ret->stream = stream;
   ret->autoflush = true;
   ret->owned = false;
