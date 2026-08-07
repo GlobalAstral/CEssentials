@@ -127,6 +127,23 @@ size_t CE__fileSize(char* path) {
   return filesize;
 }
 
+size_t CE__fileSize(char* path) {
+  guard(path == nullptr, -1);
+  FILE* f = fopen(path, "rb");
+  guard(f == nullptr, -1);
+
+  const size_t cap = 4096;
+
+  char buf[cap];
+  size_t len = 0;
+  size_t read;
+  
+  while ((read = fread(buf, 1, cap, f)) > 0)
+    len += read;
+
+  return len;
+}
+
 char* CE__readFile(char* path, size_t* length) {
   guard(path == nullptr, nullptr);
   guard(length == nullptr, nullptr);

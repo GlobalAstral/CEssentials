@@ -257,6 +257,7 @@ bool CE__randomBool();
 void CE__randomBytes(void* buffer, size_t size);
 size_t CE__randomIndex(size_t size);
 
+size_t CE__fileSize(char* path);
 char* CE__readFile(char* path, size_t* length);
 int CE__vwriteFile(char* path, char* fmt, va_list list);
 int CE__writeFile(char* path, char* fmt, ...);
