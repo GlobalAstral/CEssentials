@@ -67,13 +67,30 @@
 #define CE_ANSI_BG_BRIGHT_CYAN    "\033[106m"
 #define CE_ANSI_BG_BRIGHT_WHITE   "\033[107m"
 
+#ifdef _WIN32
+  #define PATH_SEPARATOR '\\'
+#else
+  #define PATH_SEPARATOR '/'
+#endif
+
 #define nullptr NULL
 #define loop while(true)
 #define guard(condition, ret) if ((condition)) return (ret)
 #define castderef(type, expr) (*((type*)(expr)))
+#define min(a, b) (((a) < (b)) ? (a) : (b)) 
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#define clamp(a, min, max) ((((a) < (min)) ? (min)) : (((a) > (max)) ? (max) : (a)))
 
 const char* const CE__converrno(int err);
 void* CE__memdup(void* mem, size_t size);
+int CE__memswap(void* mem1, void* mem2, size_t size);
+
+unsigned long long CE__alignUp(unsigned long long num, unsigned long long alignment);
+bool CE__isAligned(unsigned long long num, unsigned long long alignment);
+
+bool CE__fileExists(char* path);
+char* CE__getFilename(char* path);
+char* CE__getExtension(char* path);
 
 typedef void* (*CE__Malloc)(size_t size);
 typedef void* (*CE__Realloc)(void* buf, size_t size);
