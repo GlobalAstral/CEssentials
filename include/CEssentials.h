@@ -222,3 +222,19 @@ int CE__reserveHashMap(CE__HashMap self, size_t amount);
 void* CE__getOrCreateHashMap(CE__HashMap self, void* key, void* value);
 
 //TODO HashSet
+
+void CE__randomSeed(unsigned long long seed);
+void CE__randomSeedTime();
+unsigned int CE__randomUInt32();
+unsigned long long CE__randomUInt64();
+
+int CE__randomInt(int min, int max);
+size_t CE__randomSize(size_t min, size_t max);
+
+float CE__randomFloat();
+double CE__randomDouble();
+
+bool CE__randomBool();
+
+void CE__randomBytes(void* buffer, size_t size);
+size_t CE__randomIndex(size_t size);

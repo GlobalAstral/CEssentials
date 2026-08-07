@@ -55,3 +55,8 @@ add_test(
   NAME HashMapTest
   COMMAND Main hashmap
 )
+
+add_test(
+  NAME RandomTest
+  COMMAND Main random
+)

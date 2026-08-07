@@ -14,6 +14,7 @@ add_library(${PROJECT_NAME} STATIC
   "lib/cessentials.c"
   "lib/xxhash.c"
   "lib/ce_hash.c"
+  "lib/ce_random.c"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")

@@ -483,6 +483,154 @@ int hashmap() {
   return 0;
 }
 
+int rnd() {
+  printf("===== RANDOM TESTS =====\n");
+
+  /* ==========================================================
+    * Deterministic seeding
+    * ========================================================== */
+
+  CE__randomSeed(123456789ULL);
+
+  unsigned int u32_1 = CE__randomUInt32();
+  unsigned long long u64_1 = CE__randomUInt64();
+
+  CE__randomSeed(123456789ULL);
+
+  assert(u32_1 == CE__randomUInt32());
+  assert(u64_1 == CE__randomUInt64());
+
+  printf("[OK] Deterministic seed\n");
+
+  /* ==========================================================
+    * Time seed (just make sure it doesn't crash)
+    * ========================================================== */
+
+  CE__randomSeedTime();
+
+  (void)CE__randomUInt32();
+  (void)CE__randomUInt64();
+
+  printf("[OK] Time seed\n");
+
+  /* ==========================================================
+    * UInt32 / UInt64
+    * ========================================================== */
+
+  for (int i = 0; i < 1000; i++) {
+      (void)CE__randomUInt32();
+      (void)CE__randomUInt64();
+  }
+
+  printf("[OK] UInt generators\n");
+
+  /* ==========================================================
+    * Integer ranges
+    * ========================================================== */
+
+  for (int i = 0; i < 100000; i++) {
+      int n = CE__randomInt(-25, 50);
+      assert(n >= -25);
+      assert(n <= 50);
+  }
+
+  printf("[OK] randomInt\n");
+
+  /* ==========================================================
+    * size_t ranges
+    * ========================================================== */
+
+  for (size_t i = 0; i < 100000; i++) {
+      size_t n = CE__randomSize(10, 200);
+      assert(n >= 10);
+      assert(n <= 200);
+  }
+
+  printf("[OK] randomSize\n");
+
+  /* ==========================================================
+    * Floats
+    * ========================================================== */
+
+  for (int i = 0; i < 100000; i++) {
+      float f = CE__randomFloat();
+      assert(f >= 0.0f);
+      assert(f < 1.0f);
+  }
+
+  printf("[OK] randomFloat\n");
+
+  /* ==========================================================
+    * Doubles
+    * ========================================================== */
+
+  for (int i = 0; i < 100000; i++) {
+      double d = CE__randomDouble();
+      assert(d >= 0.0);
+      assert(d < 1.0);
+  }
+
+  printf("[OK] randomDouble\n");
+
+  /* ==========================================================
+    * Bool
+    * ========================================================== */
+
+  bool found_true = false;
+  bool found_false = false;
+
+  for (int i = 0; i < 1000; i++) {
+    bool b = CE__randomBool();
+
+    if (b)
+      found_true = true;
+    else
+      found_false = true;
+  }
+
+  assert(found_true);
+  assert(found_false);
+
+  printf("[OK] randomBool\n");
+
+  /* ==========================================================
+    * Random bytes
+    * ========================================================== */
+
+  unsigned char bytes[128];
+  memset(bytes, 0, sizeof(bytes));
+
+  CE__randomBytes(bytes, sizeof(bytes));
+
+  bool nonzero = false;
+
+  for (size_t i = 0; i < sizeof(bytes); i++) {
+    if (bytes[i] != 0) {
+      nonzero = true;
+      break;
+    }
+  }
+
+  assert(nonzero);
+
+  printf("[OK] randomBytes\n");
+
+  /* ==========================================================
+    * Random index
+    * ========================================================== */
+
+  for (int i = 0; i < 100000; i++) {
+    size_t idx = CE__randomIndex(37);
+    assert(idx < 37);
+  }
+
+  printf("[OK] randomIndex\n");
+
+  printf("\nAll random tests passed!\n");
+
+  return 0;
+}
+
 int main(int argc, char* argv[]) {
 
   if (argc != 2) {
@@ -512,6 +660,8 @@ int main(int argc, char* argv[]) {
     return logger();
   if (strequ(test, "hashmap"))
     return hashmap();
+  if (strequ(test, "random"))
+    return rnd();
 
   return 0;
 }
