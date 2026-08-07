@@ -109,3 +109,109 @@ void* CE__calloc(size_t size, size_t ele_size) {
 void CE__free(void* buf) {
   _f(buf);
 }
+
+size_t CE__fileSize(char* path) {
+  FILE* f = fopen(path, "rb");
+  guard(f == nullptr, 0);
+
+  const size_t buf_size = 4096;
+  char buf[buf_size];
+  size_t chars;
+  size_t filesize = 0;
+
+  while ((chars = fread(buf, sizeof(char), buf_size, f)) > 0)
+    filesize += chars;
+
+  fclose(f);
+  
+  return filesize;
+}
+
+char* CE__readFile(char* path, size_t* length) {
+  guard(path == nullptr, nullptr);
+  guard(length == nullptr, nullptr);
+
+  FILE* f = fopen(path, "rb");
+  guard(f == nullptr, nullptr);
+
+  size_t capacity = 4096;
+  char* buffer = (char*)CE__malloc(capacity);
+  if (buffer == nullptr) {
+    fclose(f);
+    return nullptr;
+  }
+
+  size_t len = 0;
+  size_t read;
+  while (true) {
+    if (len >= capacity) {
+      capacity *= 2;
+      char* new_ptr = (char*)CE__realloc(buffer, capacity);
+      if (new_ptr == nullptr) {
+        CE__free(buffer);
+        fclose(f);
+        return nullptr;
+      }
+      buffer = new_ptr;
+    }
+
+    read = fread(buffer + len, 1, capacity - len, f);
+
+    if (read == 0)
+      break;
+    
+    len += read;
+  }
+
+  char* new_ptr = (char*)CE__realloc(buffer, len + 1);
+  if (new_ptr == nullptr) {
+    CE__free(buffer);
+    fclose(f);
+    return nullptr;
+  }
+  buffer = new_ptr;
+  buffer[len] = 0;
+  *length = len;
+
+  fclose(f);
+  return buffer;
+}
+
+int CE__vwriteFile(char* path, char* fmt, va_list list) {
+  guard(path == nullptr, -1);
+  guard(fmt == nullptr, -1);
+
+  FILE* f = fopen(path, "w");
+  if (f == nullptr)
+    return -1;
+  int temp = vfprintf(f, fmt, list);
+  fclose(f);
+  return temp;
+}
+
+int CE__writeFile(char* path, char* fmt, ...) {
+  va_list list;
+  va_start(list, fmt);
+  int temp = CE__vwriteFile(path, fmt, list);
+  va_end(list);
+  return temp;
+}
+
+int CE__vappendFile(char* path, char* fmt, va_list list) {
+  guard(path == nullptr, -1);
+  guard(fmt == nullptr, -1);
+  FILE* f = fopen(path, "a");
+  if (f == nullptr)
+    return -1;
+  int temp = vfprintf(f, fmt, list);
+  fclose(f);
+  return temp;
+}
+
+int CE__appendFile(char* path, char* fmt, ...) {
+  va_list list;
+  va_start(list, fmt);
+  int temp = CE__vappendFile(path, fmt, list);
+  va_end(list);
+  return temp;
+}

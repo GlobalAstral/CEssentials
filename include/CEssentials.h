@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #define OK 0
 #define VALUE_IS_NULL -1
@@ -255,3 +256,9 @@ bool CE__randomBool();
 
 void CE__randomBytes(void* buffer, size_t size);
 size_t CE__randomIndex(size_t size);
+
+char* CE__readFile(char* path, size_t* length);
+int CE__vwriteFile(char* path, char* fmt, va_list list);
+int CE__writeFile(char* path, char* fmt, ...);
+int CE__vappendFile(char* path, char* fmt, va_list list);
+int CE__appendFile(char* path, char* fmt, ...);
