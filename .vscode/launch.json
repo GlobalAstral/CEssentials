@@ -5,7 +5,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/test/Main",
-      "args": ["hashmap"],
+      "args": ["random"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

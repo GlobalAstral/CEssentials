@@ -271,14 +271,3 @@ void* CE__getOrCreateHashMap(CE__HashMap self, void* key, void* value) {
   CE__insertHashMap(self, key, value);
   return CE__getHashMap(self, key);
 }
-
-bool next(CE__Iterator self) {
-  if (self->index >= self->capacity)
-    return false;
-  Bucket* buckets = self->pointer;
-  Bucket bucket = buckets[self->index];
-  while (bucket == nullptr)
-    bucket = buckets[++(self->index)];
-
-  return true;
-}
