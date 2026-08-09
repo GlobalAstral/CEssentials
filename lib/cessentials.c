@@ -111,23 +111,6 @@ void CE__free(void* buf) {
 }
 
 size_t CE__fileSize(char* path) {
-  FILE* f = fopen(path, "rb");
-  guard(f == nullptr, 0);
-
-  const size_t buf_size = 4096;
-  char buf[buf_size];
-  size_t chars;
-  size_t filesize = 0;
-
-  while ((chars = fread(buf, sizeof(char), buf_size, f)) > 0)
-    filesize += chars;
-
-  fclose(f);
-  
-  return filesize;
-}
-
-size_t CE__fileSize(char* path) {
   guard(path == nullptr, -1);
   FILE* f = fopen(path, "rb");
   guard(f == nullptr, -1);
