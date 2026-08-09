@@ -35,6 +35,10 @@ void CE__freeArrayList(CE__ArrayList list) {
   CE__free(list);
 }
 
+void CE__freeArrayListView(CE__ArrayListView view) {
+  CE__free(view);
+}
+
 int CE__ArrayListRealloc(CE__ArrayList list, size_t size) {
   guard(list == nullptr, VALUE_IS_NULL);
   size_t needed_size = getcap(size);
@@ -77,7 +81,7 @@ int CE__appendArrayList(CE__ArrayList self, void* item) {
   return CE__insertArrayList(self, self->length, item);
 }
 
-CE__ArrayList CE__ArrayListSection(CE__ArrayList self, size_t start, size_t end) {
+CE__ArrayListView CE__ArrayListSection(CE__ArrayList self, size_t start, size_t end) {
   guard(self == nullptr || self->buffer == nullptr || start > self->length || end >= self->length, nullptr);
 
   CE__ArrayList view = (CE__ArrayList)CE__malloc(sizeof(*view));

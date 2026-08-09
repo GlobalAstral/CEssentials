@@ -56,6 +56,10 @@ void CE__freeString(CE__String s) {
   CE__free(s);
 }
 
+void CE__freeStringView(CE__StringView view) {
+  CE__free(view);
+}
+
 int CE__strRealloc(CE__String s, size_t size) {
   size_t needed_size = getcap(size);
   byte* new_buf = (byte*)CE__realloc(s->buffer, needed_size);
@@ -160,7 +164,7 @@ char* CE__strcstr(CE__String self) {
   return temp;
 }
 
-CE__String CE__substr(CE__String self, size_t start, size_t end) {
+CE__StringView CE__substr(CE__String self, size_t start, size_t end) {
   guard(self == nullptr || self->buffer == nullptr || start > self->length || end > self->length, nullptr);
 
   size_t bstart = CE__utf8_byte_index(self, start);
@@ -177,11 +181,11 @@ CE__String CE__substr(CE__String self, size_t start, size_t end) {
   return r;
 }
 
-CE__String CE__strfind(CE__String self, CE__String find) {
+CE__StringView CE__strfind(CE__String self, CE__String find) {
   guard(self == nullptr || find == nullptr || self->buffer == nullptr || find->buffer == nullptr, nullptr);
 
   for (size_t i = 0; i < self->length - find->length; i++) {
-    CE__String sub = CE__substr(self, i, i + find->length);
+    CE__StringView sub = CE__substr(self, i, i + find->length);
     guard(CE__strequ(sub, find), sub);
   }
   return nullptr;

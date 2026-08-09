@@ -115,7 +115,7 @@ bool CE__IteratorNext(CE__Iterator it);
 void* CE__IteratorGet(CE__Iterator it);
 void CE__FreeIterator(CE__Iterator it);
 
-typedef struct CE__String *CE__String;
+typedef struct CE__String *CE__String, *CE__StringView;
 
 size_t CE__strlength(CE__String s);
 size_t CE__strblen(CE__String s);
@@ -124,6 +124,7 @@ size_t CE__utf8len(CE__String s);
 CE__String CE__newString(char* init);
 CE__String CE__newStringLen(char* init, size_t size);
 void CE__freeString(CE__String s);
+void CE__freeStringView(CE__StringView view);
 int CE__strRealloc(CE__String s, size_t size);
 size_t CE__utf8_byte_index(CE__String target, size_t index);
 int CE__insertString(CE__String self, size_t index, CE__String other);
@@ -133,8 +134,8 @@ int CE__appendCstr(CE__String self, char* other);
 int CE__strcmp(CE__String self, CE__String other);
 bool CE__strequ(CE__String self, CE__String other);
 char* CE__strcstr(CE__String self);
-CE__String CE__substr(CE__String self, size_t start, size_t end);
-CE__String CE__strfind(CE__String self, CE__String find);
+CE__StringView CE__substr(CE__String self, size_t start, size_t end);
+CE__StringView CE__strfind(CE__String self, CE__String find);
 bool CE__strcontains(CE__String self, CE__String find);
 int CE__printstr(CE__String self);
 int CE__fprintstr(FILE* stream, CE__String self);
@@ -144,16 +145,17 @@ CE__Iterator CE__strrbegin(CE__String str);
 char CE__strbyteat(CE__String str, size_t index);
 char* CE__strat(CE__String str, size_t index);
 
-typedef struct CE__ArrayList *CE__ArrayList, *CE__Stack;
+typedef struct CE__ArrayList *CE__ArrayList, *CE__Stack, *CE__ArrayListView;
 
 size_t CE__ArrayListLen(CE__ArrayList self);
 size_t CE__ArrayListEleSz(CE__ArrayList self);
 CE__ArrayList CE__newArrayList(size_t element_size);
 void CE__freeArrayList(CE__ArrayList list);
+void CE__freeArrayListView(CE__ArrayListView view);
 int CE__ArrayListRealloc(CE__ArrayList list, size_t size);
 int CE__insertArrayList(CE__ArrayList self, size_t index, void* item);
 int CE__appendArrayList(CE__ArrayList self, void* item);
-CE__ArrayList CE__ArrayListSection(CE__ArrayList self, size_t start, size_t end);
+CE__ArrayListView CE__ArrayListSection(CE__ArrayList self, size_t start, size_t end);
 void* CE__ArrayListFind(CE__ArrayList self, void* item);
 bool CE__ArrayListContains(CE__ArrayList self, void* item);
 int CE__removeArrayList(CE__ArrayList self, size_t index);
