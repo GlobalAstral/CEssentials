@@ -5,69 +5,65 @@
 #define getcap(size) ( ((size) == 0) ? (DEFAULT_CAPACITY) : (ceil(size, DEFAULT_CAPACITY) * DEFAULT_CAPACITY) )
 
 typedef struct Bucket {
-  CE__Hash128 hash;
-  void* key;
   void* value;
+  CE__Hash128 hash;
   struct Bucket* next;
 } *Bucket;
 
-struct CE__HashMap {
+struct CE__HashSet {
   size_t length;
   size_t capacity;
-  size_t key_size;
-  size_t value_size;
+  size_t element_size;
   Bucket* buckets;
 
-  CE__HashMapEquals equals;
+  CE__HashSetEquals equals;
 };
 
-size_t CE__lengthHashMap(CE__HashMap self) {
-  return self->length;
+size_t CE__lengthHashSet(CE__HashSet set) {
+  return set->length;
 }
 
-CE__HashMap CE__newHashMapEx(size_t key_size, size_t value_size, CE__HashMapEquals equals) {
-  CE__HashMap ret = (CE__HashMap)CE__malloc(sizeof(*ret));
+CE__HashSet CE__newHashSetEx(size_t element_size, CE__HashSetEquals equals) {
+  CE__HashSet ret = (CE__HashSet)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
   
   ret->capacity = DEFAULT_CAPACITY;
   ret->equals = equals;
-  ret->key_size = key_size;
   ret->length = 0;
-  ret->value_size = value_size;
+  ret->element_size = element_size;
   ret->buckets = CE__calloc(ret->capacity, sizeof(Bucket));
   guard(ret->buckets == nullptr, nullptr);
 
   return ret;
 }
 
-bool default_equals_hashmap(void* a, void* b, size_t size) {
+bool default_equals_hashset(void* a, void* b, size_t size) {
   return memcmp(a, b, size) == 0;
 }
 
-CE__HashMap CE__newHashMap(size_t key_size, size_t value_size) {
-  return CE__newHashMapEx(key_size, value_size, default_equals_hashmap);
+CE__HashSet CE__newHashSet(size_t element_size) {
+  return CE__newHashSetEx(element_size, default_equals_hashset);
 }
 
-void CE__freeHashMap(CE__HashMap self) {
-  if (self == nullptr)
+void CE__freeHashSet(CE__HashSet set) {
+  if (set == nullptr)
     return;
-  for (size_t i = 0; i < self->capacity; i++) {
-    Bucket b = self->buckets[i];
+  for (size_t i = 0; i < set->capacity; i++) {
+    Bucket b = set->buckets[i];
     if (b == nullptr) continue;
     while (b != nullptr) {
       Bucket next = b->next;
-      CE__free(b->key);
       CE__free(b->value);
       CE__freeHash128(b->hash);
       CE__free(b);
       b = next;
     }
   }
-  CE__free(self->buckets);
-  CE__free(self);
+  CE__free(set->buckets);
+  CE__free(set);
 }
 
-int resize_hashmap(CE__HashMap self, size_t newsize) {
+int resize_hashset(CE__HashSet self, size_t newsize) {
   guard(self == nullptr, VALUE_IS_NULL);
 
   if (self->capacity == newsize)
@@ -99,13 +95,12 @@ int resize_hashmap(CE__HashMap self, size_t newsize) {
   return OK;
 }
 
-Bucket newBucket_HashMap(CE__Hash128 hash, void* key, void* value, Bucket next) {
+Bucket newBucket_HashSet(CE__Hash128 hash, void* value, Bucket next) {
   Bucket ret = (Bucket)CE__malloc(sizeof(*ret));
   guard(!ret, nullptr);
 
   *ret = (struct Bucket) {
     .hash = hash,
-    .key = key,
     .value = value,
     .next = next
   };
@@ -113,31 +108,23 @@ Bucket newBucket_HashMap(CE__Hash128 hash, void* key, void* value, Bucket next) 
   return ret;
 }
 
-int CE__insertHashMap(CE__HashMap self, void* key, void* value) {
+int CE__insertHashSet(CE__HashSet self, void* value) {
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(key == nullptr, OTHER_VALUE_IS_NULL);
   guard(value == nullptr, OTHER_VALUE_IS_NULL);
   
-  CE__Hash128 hash = CE__hash128(key, self->key_size);
+  CE__Hash128 hash = CE__hash128(value, self->element_size);
   size_t index = CE__Hash128Modulo(hash, self->capacity);
 
   Bucket* bucket = &self->buckets[index];
 
   loop {
     if (*bucket == nullptr) {
-      void* k = CE__memdup(key, self->key_size);
-      guard(k == nullptr, CANNOT_ALLOCATE);
-      
-      void* v = CE__memdup(value, self->value_size);
-      if (v == nullptr) {
-        CE__free(k);
-        return CANNOT_ALLOCATE;
-      }
+      void* k = CE__memdup(value, self->element_size);
+      guard(k == nullptr, CANNOT_ALLOCATE);      
 
-      *bucket = newBucket_HashMap(hash, k, v, nullptr);
+      *bucket = newBucket_HashSet(hash, k, nullptr);
       if (*bucket == nullptr) {
         CE__free(k);
-        CE__free(v);
         return CANNOT_ALLOCATE;
       }
 
@@ -145,52 +132,46 @@ int CE__insertHashMap(CE__HashMap self, void* key, void* value) {
       return OK;
     }
 
-    if (CE__Hash128Equals((*bucket)->hash, hash) && self->equals(key, (*bucket)->key, self->key_size)) {
-      memcpy((*bucket)->value, value, self->value_size);
+    if (CE__Hash128Equals((*bucket)->hash, hash) && self->equals(value, (*bucket)->value, self->element_size))
       return OK;
-    }
 
     bucket = &((*bucket)->next);
   }
 
   if (((double)self->length  * sizeof(Bucket) / self->capacity) > 0.7) {
     size_t newsize = self->capacity * 2;
-    guard(resize_hashmap(self, newsize) != OK, CANNOT_ALLOCATE);
+    guard(resize_hashset(self, newsize) != OK, CANNOT_ALLOCATE);
   }
 
   return OK;
 }
 
-void* CE__getHashMap(CE__HashMap self, void* key) {
+bool CE__containsHashSet(CE__HashSet self, void* value) {
   guard(self == nullptr, nullptr);
-  guard(key == nullptr, nullptr);
+  guard(value == nullptr, nullptr);
 
-  CE__Hash128 hash = CE__hash128(key, self->key_size);
+  CE__Hash128 hash = CE__hash128(value, self->element_size);
   size_t index = CE__Hash128Modulo(hash, self->capacity);
 
   Bucket* bucket = &self->buckets[index];
 
   loop {
     if (*bucket == nullptr)
-      return nullptr;
+      return false;
 
-    if (CE__Hash128Equals((*bucket)->hash, hash) && self->equals(key, (*bucket)->key, self->key_size))
-      return (*bucket)->value;
+    if (CE__Hash128Equals((*bucket)->hash, hash) && self->equals(value, (*bucket)->value, self->element_size))
+      return true;
 
     bucket = &((*bucket)->next);
   }
-  return nullptr;
+  return false;
 }
 
-bool CE__containsHashMap(CE__HashMap self, void* key) {
-  return CE__getHashMap(self, key) != nullptr;
-}
-
-int CE__removeHashMap(CE__HashMap self, void* key) {
+int CE__removeHashSet(CE__HashSet self, void* value) {
   guard(self == nullptr, VALUE_IS_NULL);
-  guard(key == nullptr, OTHER_VALUE_IS_NULL);
+  guard(value == nullptr, OTHER_VALUE_IS_NULL);
   
-  CE__Hash128 hash = CE__hash128(key, self->key_size);
+  CE__Hash128 hash = CE__hash128(value, self->element_size);
   size_t index = CE__Hash128Modulo(hash, self->capacity);
 
   Bucket* bucket = &self->buckets[index];
@@ -202,11 +183,10 @@ int CE__removeHashMap(CE__HashMap self, void* key) {
     }
     Bucket b = *bucket;
 
-    if (CE__Hash128Equals(b->hash, hash) && self->equals(key, b->key, self->key_size)) {
+    if (CE__Hash128Equals(b->hash, hash) && self->equals(value, b->value, self->element_size)) {
       *bucket = b->next;
       CE__freeHash128(b->hash);
       CE__freeHash128(hash);
-      CE__free(b->key);
       CE__free(b->value);
       CE__free(b);
       self->length--;
@@ -214,7 +194,7 @@ int CE__removeHashMap(CE__HashMap self, void* key) {
       if (((double)self->length * sizeof(Bucket) / self->capacity) <= 0.33) {
         size_t newsize = getcap(self->length);
         if (newsize != self->capacity)
-          guard(resize_hashmap(self, newsize) != OK, CANNOT_ALLOCATE);
+          guard(resize_hashset(self, newsize) != OK, CANNOT_ALLOCATE);
       }
 
       return OK;
@@ -227,15 +207,7 @@ int CE__removeHashMap(CE__HashMap self, void* key) {
   return OK;
 }
 
-int CE__reserveHashMap(CE__HashMap self, size_t amount) {
+int CE__reserveHashSet(CE__HashSet self, size_t amount) {
   size_t newsize = getcap(amount);
-  return resize_hashmap(self, newsize);
-}
-
-void* CE__getOrCreateHashMap(CE__HashMap self, void* key, void* value) {
-  void* v = CE__getHashMap(self, key);
-  if (v != nullptr)
-    return v;
-  CE__insertHashMap(self, key, value);
-  return CE__getHashMap(self, key);
+  return resize_hashset(self, newsize);
 }

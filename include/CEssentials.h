@@ -239,7 +239,18 @@ int CE__removeHashMap(CE__HashMap self, void* key);
 int CE__reserveHashMap(CE__HashMap self, size_t amount);
 void* CE__getOrCreateHashMap(CE__HashMap self, void* key, void* value);
 
-//TODO HashSet
+typedef bool (*CE__HashSetEquals)(void*, void*, size_t);
+
+typedef struct CE__HashSet *CE__HashSet;
+
+size_t CE__lengthHashSet(CE__HashSet set);
+CE__HashSet CE__newHashSetEx(size_t element_size, CE__HashSetEquals equals);
+CE__HashSet CE__newHashSet(size_t element_size);
+void CE__freeHashSet(CE__HashSet set);
+int CE__insertHashSet(CE__HashSet self, void* value);
+bool CE__containsHashSet(CE__HashSet self, void* value);
+int CE__removeHashSet(CE__HashSet self, void* value);
+int CE__reserveHashSet(CE__HashSet self, size_t amount);
 
 void CE__randomSeed(unsigned long long seed);
 void CE__randomSeedTime();

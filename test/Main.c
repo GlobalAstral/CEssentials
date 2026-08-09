@@ -483,6 +483,92 @@ int hashmap() {
   return 0;
 }
 
+int hashset() {
+  printf("Testing HashSet...\n");
+
+  CE__HashSet set = CE__newHashSet(sizeof(int));
+  assert(set != NULL);
+  assert(CE__lengthHashSet(set) == 0);
+
+  // Insert some values
+  int a = 10;
+  int b = 20;
+  int c = 30;
+
+  assert(CE__insertHashSet(set, &a) == OK);
+  assert(CE__insertHashSet(set, &b) == OK);
+  assert(CE__insertHashSet(set, &c) == OK);
+
+  assert(CE__lengthHashSet(set) == 3);
+
+  // Contains
+  assert(CE__containsHashSet(set, &a));
+  assert(CE__containsHashSet(set, &b));
+  assert(CE__containsHashSet(set, &c));
+
+  int missing = 40;
+  assert(!CE__containsHashSet(set, &missing));
+
+  // Duplicate insertion should not increase length
+  assert(CE__insertHashSet(set, &a) == OK);
+  assert(CE__lengthHashSet(set) == 3);
+  assert(CE__containsHashSet(set, &a));
+
+  // Remove an element
+  assert(CE__removeHashSet(set, &b) == OK);
+  assert(CE__lengthHashSet(set) == 2);
+  assert(!CE__containsHashSet(set, &b));
+
+  // The other elements should still exist
+  assert(CE__containsHashSet(set, &a));
+  assert(CE__containsHashSet(set, &c));
+
+  // Removing a missing element
+  assert(CE__removeHashSet(set, &missing) == NOT_FOUND);
+
+  // Reinsert after removal
+  assert(CE__insertHashSet(set, &b) == OK);
+  assert(CE__lengthHashSet(set) == 3);
+  assert(CE__containsHashSet(set, &b));
+
+  // Reserve
+  assert(CE__reserveHashSet(set, 128) == OK);
+
+  // Make sure everything survived reallocation
+  assert(CE__containsHashSet(set, &a));
+  assert(CE__containsHashSet(set, &b));
+  assert(CE__containsHashSet(set, &c));
+  assert(CE__lengthHashSet(set) == 3);
+
+  // Stress insertion to exercise collision chains and resizing
+  int values[1000];
+
+  for (int i = 0; i < 1000; i++) {
+      values[i] = i + 100;
+      assert(CE__insertHashSet(set, &values[i]) == OK);
+  }
+
+  assert(CE__lengthHashSet(set) == 1003);
+
+  for (int i = 0; i < 1000; i++)
+      assert(CE__containsHashSet(set, &values[i]));
+
+  // Remove everything we inserted
+  for (int i = 0; i < 1000; i++)
+      assert(CE__removeHashSet(set, &values[i]) == OK);
+
+  assert(CE__lengthHashSet(set) == 3);
+
+  assert(CE__containsHashSet(set, &a));
+  assert(CE__containsHashSet(set, &b));
+  assert(CE__containsHashSet(set, &c));
+
+  CE__freeHashSet(set);
+
+  printf("HashSet tests passed!\n");
+  return 0;
+}
+
 int rnd() {
   printf("===== RANDOM TESTS =====\n");
 
@@ -662,6 +748,8 @@ int main(int argc, char* argv[]) {
     return hashmap();
   if (strequ(test, "random"))
     return rnd();
+  if (strequ(test, "hashset"))
+    return hashset();
 
   return 0;
 }

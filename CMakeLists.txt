@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} STATIC
   "lib/xxhash.c"
   "lib/ce_hash.c"
   "lib/ce_hashmap.c"
+  "lib/ce_hashset.c"
   "lib/ce_random.c"
 )
 

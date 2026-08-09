@@ -60,3 +60,8 @@ add_test(
   NAME RandomTest
   COMMAND Main random
 )
+
+add_test(
+  NAME HashSetTest
+  COMMAND Main hashset
+)
