@@ -9,14 +9,16 @@ int arraylist() {
   CE__ArrayList arr = CE__newArrayList(sizeof(int));
   puts("Appending...");
   CE__appendArrayList(arr, &(int){1});
+  CE__appendArrayList(arr, &(int){4});
   CE__appendArrayList(arr, &(int){2});
   CE__appendArrayList(arr, &(int){3});
-  CE__appendArrayList(arr, &(int){4});
-  CE__appendArrayList(arr, &(int){5});
   CE__appendArrayList(arr, &(int){6});
+  CE__appendArrayList(arr, &(int){5});
   CE__appendArrayList(arr, &(int){7});
-  CE__appendArrayList(arr, &(int){8});
   CE__appendArrayList(arr, &(int){9});
+  CE__appendArrayList(arr, &(int){8});
+
+  assert(CE__sortArrayList(arr, CE__compareInt()) == OK);
 
   CE__Iterator it = CE__ArrayListBegin(arr);
 

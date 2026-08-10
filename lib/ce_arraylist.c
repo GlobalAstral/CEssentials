@@ -188,3 +188,25 @@ void* CE__popArrayList(CE__ArrayList self) {
   self->length--;
   return ret;
 }
+
+int CE__sortArrayList(CE__ArrayList self, ArrayListCompare cmp) {
+  guard(self == nullptr, VALUE_IS_NULL);
+  guard(cmp == nullptr, OTHER_VALUE_IS_NULL);
+  
+  qsort(
+    self->buffer,
+    self->length,
+    self->element_size,
+    cmp
+  );
+  
+  return OK;
+}
+
+int CE__cmpint(const void* a, const void* b) {
+  return (*((int*)a)) - (*((int*)b));
+}
+
+ArrayListCompare CE__compareInt() {
+  return CE__cmpint;
+}

@@ -164,6 +164,11 @@ CE__Iterator CE__ArrayListRBegin(CE__ArrayList self);
 void* CE__ArrayListAt(CE__ArrayList self, size_t index);
 void* CE__popArrayList(CE__ArrayList self);
 
+typedef int (*ArrayListCompare)(const void* a, const void*);
+
+int CE__sortArrayList(CE__ArrayList self, ArrayListCompare cmp);
+ArrayListCompare CE__compareInt();
+
 typedef struct CE__LinkedList *CE__LinkedList;
 
 size_t CE__LinkedListLen(CE__LinkedList ll);
