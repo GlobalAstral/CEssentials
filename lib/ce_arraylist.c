@@ -189,6 +189,10 @@ void* CE__popArrayList(CE__ArrayList self) {
   return ret;
 }
 
+void CE__clearArrayList(CE__ArrayList self) {
+  self->length = 0;
+}
+
 int CE__sortArrayList(CE__ArrayList self, ArrayListCompare cmp) {
   guard(self == nullptr, VALUE_IS_NULL);
   guard(cmp == nullptr, OTHER_VALUE_IS_NULL);

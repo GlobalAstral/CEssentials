@@ -163,6 +163,7 @@ CE__Iterator CE__ArrayListBegin(CE__ArrayList self);
 CE__Iterator CE__ArrayListRBegin(CE__ArrayList self);
 void* CE__ArrayListAt(CE__ArrayList self, size_t index);
 void* CE__popArrayList(CE__ArrayList self);
+void CE__clearArrayList(CE__ArrayList self);
 
 typedef int (*ArrayListCompare)(const void* a, const void*);
 
